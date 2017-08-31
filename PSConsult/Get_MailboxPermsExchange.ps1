@@ -7,9 +7,10 @@ $Mailboxes = Get-Mailbox -ResultSize:Unlimited | Select DistinguishedName, UserP
 @{n = "OU" ; e = {$_.Distinguishedname | ForEach-Object {($_ -split '(OU=)', 2)[1, 2] -join ''}}}
 ForEach ($Mailbox in $Mailboxes) { 
     Write-Output "Mailbox: $($Mailbox.UserPrincipalName)"
-    $SendAs = (Get-RecipientPermission $Mailbox.DistinguishedName | ? {$_.AccessRights -match "SendAs" -and $_.Trustee -ne "NT AUTHORITY\SELF" -and !$_.Trustee.tostring().startswith('S-1-5-21-')} | select -ExpandProperty trustee) -join ";" 
-    $FullAccess = (Get-MailboxPermission $Mailbox.DistinguishedName | ? {$_.AccessRights -eq "FullAccess" -and !$_.IsInherited -and !$_.user.tostring().startswith('S-1-5-21-')} | Select -ExpandProperty User) -join ";"
-    $sendbehalf = (Get-Mailbox $Mailbox.DistinguishedName | select-object -ExpandProperty GrantSendOnBehalfTo) -join ";"
+    $SendAs = ((Get-RecipientPermission $Mailbox.DistinguishedName | ? {$_.AccessRights -match "SendAs" -and $_.Trustee -ne "NT AUTHORITY\SELF" -and !$_.Trustee.tostring().startswith('S-1-5-21-')} | select -ExpandProperty trustee) -replace "^.*[\\/]") -join ";" 
+    $FullAccess = ((Get-MailboxPermission $Mailbox.DistinguishedName | ? {$_.AccessRights -eq "FullAccess" -and !$_.IsInherited -and !$_.user.tostring().startswith('S-1-5-21-')} | Select -ExpandProperty User) -replace "^(.*[\\\/])") -join ";"
+    $FullAccess = ((Get-MailboxPermission $Mailbox.DistinguishedName | ? {$_.AccessRights -eq "FullAccess" -and !$_.IsInherited -and !$_.user.tostring().startswith('S-1-5-21-')} | Select -ExpandProperty User) -replace "^(.*[\\\/])") -join ";"
+    $sendbehalf = ((Get-Mailbox $Mailbox.DistinguishedName | select-object -ExpandProperty GrantSendOnBehalfTo) -replace "^(.*[\\\/])") -join ";"
     if (!$SendAs -and !$FullAccess -and !$sendbehalf) {continue}
     $Mailbox.DisplayName + "!" + $Mailbox.Alias + "!" + $Mailbox.OU + "!" + $Mailbox.UserPrincipalName + "!" + $FullAccess + "!" + $SendAs + "!" + $sendbehalf | Out-File $OutFile -Append -encoding ascii
 }  
