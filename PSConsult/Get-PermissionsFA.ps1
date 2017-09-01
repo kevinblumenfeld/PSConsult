@@ -52,12 +52,11 @@ function Get-Permitted {
         
     }
     Process {
-        $resultArray = @()
         $FAHash = @{}
         $FAHash['FullAccess'] = ((Get-Mailbox $user).DisplayName)
         $FAHash['Mailbox'] = $Display
-        $resultArray += [psCustomObject]$FAHash
-        $resultArray
+        [psCustomObject]$FAHash
+
     }
     End {
 
