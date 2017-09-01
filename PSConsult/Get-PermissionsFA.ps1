@@ -41,11 +41,11 @@ function Get-Permitted {
     Param
     (
         [Parameter(Mandatory = $true,
-            ValueFromPipeline = $true)]
+            ValueFromPipelineByPropertyName = $true)]
         [string]$Display,
 
         [Parameter(Mandatory = $true,
-            ValueFromPipeline = $true)]
+            ValueFromPipelineByPropertyName = $true)]
         [string]$user
     )
     Begin {
@@ -56,6 +56,8 @@ function Get-Permitted {
         $FAHash['FullAccess'] = ((Get-Mailbox $user).DisplayName)
         $FAHash['Mailbox'] = $Display
         [psCustomObject]$FAHash
+        # $array = $resultArray | ForEach-Object { "{0} `t {1}" -f $_.Mailbox, $_.FullAccess }
+        # $array
 
     }
     End {
@@ -67,11 +69,11 @@ function Get-GroupPermitted {
     Param
     (
         [Parameter(Mandatory = $true,
-            ValueFromPipeline = $true)]
+            ValueFromPipelineByPropertyName = $true)]
         [string]$Display,
     
         [Parameter(Mandatory = $true,
-            ValueFromPipeline = $true)]
+            ValueFromPipelineByPropertyName = $true)]
         [string]$Group
     )
     Begin {
