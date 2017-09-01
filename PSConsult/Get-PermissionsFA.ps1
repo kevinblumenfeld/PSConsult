@@ -18,74 +18,88 @@
             [string]$FullAccess = (Get-MailboxPermission $Mailbox.DistinguishedName | ? {$_.AccessRights -eq "FullAccess" -and !$_.IsInherited -and !$_.user.tostring().startswith('S-1-5-21-')} | Select -ExpandProperty User) -join "*"
             if ($FullAccess) {
                 ($FullAccess).split("*") | % {
-                    $FAHash = @{}
-                    $FAHash['Mailbox'] = ($Mailbox.DisplayName)
-                    $Permitted = (Get-Permitted -feed $_)
-                    $FAHash['FullAccess'] = $Permitted
-                    $resultArray += [psCustomObject]$FAHash
+                    $ADType = (Get-ADAccountType -name $_)
+                    if ($ADType -eq 'User') {
+                        
+                        Get-Permitted -Display $Mailbox.DisplayName -User $_
+                        
+                    }
+                    if ($ADType -eq 'Group') {
+                        Get-Group $user | select -expandproperty members | % {
+                            Get-GroupPermitted -Display $Mailbox.DisplayName -Group $_
+                        }
+                    }
                 } 
             } 
         }
     }
     End {
-        $resultArray
+        
     }
 }
 
 function Get-Permitted {
     [CmdletBinding()]
-    Param 
+    Param
     (
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true)]
-        [string]$feed
+        [string]$Display,
+
+        [Parameter(Mandatory = $true,
+            ValueFromPipeline = $true)]
+        [string]$user
     )
     Begin {
-
+        $resultArray = @()
     }
     Process {
-        Try {
-            [string]$FullAccess = ((Get-Mailbox $feed -ErrorAction Stop).DisplayName)
-
-        }
-        Catch {
-            [string]$FullAccess = Get-GroupPermitted $feed -ErrorAction Stop
-        }  
+        $FAHash = @{}
+        $FAHash['FullAccess'] = ((Get-Mailbox $user).DisplayName)
+        $FAHash['Mailbox'] = $Display
     }
     End {
-        $FullAccess
+        $FAHash
     }
 }
-
 function Get-GroupPermitted {
     [CmdletBinding()]
-    Param 
+    Param
     (
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true)]
-        [string]$feed
+        [string]$Display,
+    
+        [Parameter(Mandatory = $true,
+            ValueFromPipeline = $true)]
+        [string]$Group
     )
     Begin {
 
     }
     Process {
-        Try {
-            [string]$groupMembers = (Get-Group $feed -ErrorAction Stop | select -expandproperty members) -join "*"
-            if ($groupMembers) {
-                ($groupMembers).split("*") | % {
-                    Get-Permitted -feed $_
+        $GroupMembers = (Get-Group $Group | select -expandproperty members) -join "*" 
+        if ($GroupMembers) {
+            ($GroupMembers).split("*") | % {
+                $ADType = (Get-ADAccountType -name $_)
+                if ($ADType -eq 'User') {
+                    Get-Permitted -Display $Mailbox.DisplayName -User $_
+                }
+                if ($ADType -eq 'Group') {
+                    Get-Group $user | select -expandproperty members | % {
+                        Get-GroupPermitted -Display $Mailbox.DisplayName -Group $_
+                    }
                 }
             }
         }
-        Catch {
-        }   
     }
     End {
-            
+        
     }
 }
 
-function Get-ADAccount {
+
+function Get-ADAccountType {
     param (
         [string] $Name
     )
@@ -94,7 +108,12 @@ function Get-ADAccount {
         $Name = $Name.Split('\')[1]
     }
     $strFilter = "(&(objectCategory=*)(samAccountName=$Name))"
-    $objSearcher = New-Object System.DirectoryServices.DirectorySearcher([ADSI]"LDAP://$Domain")
+    if ($Domain) {
+        $objSearcher = New-Object System.DirectoryServices.DirectorySearcher([ADSI]"LDAP://$Domain")
+    }
+    Else {
+        $objSearcher = New-Object System.DirectoryServices.DirectorySearcher
+    }
     $objSearcher.Filter = $strFilter
     try {
         $objPath = $objSearcher.FindOne()
