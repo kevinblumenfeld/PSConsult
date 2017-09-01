@@ -11,6 +11,7 @@
         Add-PSSnapin Microsoft.Exchange.Management.PowerShell.E2010 -EA SilentlyContinue
         Set-AdServerSettings -ViewEntireForest $true
         $resultArray = @()
+        Write-Output '"Mailbox","FullAccess"'
         $Mailboxes = Get-Mailbox -ResultSize:Unlimited | Select DistinguishedName, UserPrincipalName, DisplayName, Alias,
         @{n = "OU" ; e = {$_.Distinguishedname | ForEach-Object {($_ -split '(OU=)', 2)[1, 2] -join ''}}}
 
@@ -52,12 +53,14 @@ function Get-Permitted {
         
     }
     Process {
+        $resultArray = @()
         $FAHash = @{}
         $FAHash['FullAccess'] = ((Get-Mailbox $user).DisplayName)
         $FAHash['Mailbox'] = $Display
-        [psCustomObject]$FAHash
-        # $array = $resultArray | ForEach-Object { "{0} `t {1}" -f $_.Mailbox, $_.FullAccess }
-        # $array
+        # [psCustomObject]$FAHash
+        $resultArray = [psCustomObject]$FAHash
+        $array = $resultArray | ForEach-Object { '"{0}","{1}"' -f $_.Mailbox, $_.FullAccess }
+        $array
 
     }
     End {
