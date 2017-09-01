@@ -11,91 +11,41 @@
         Add-PSSnapin Microsoft.Exchange.Management.PowerShell.E2010 -EA SilentlyContinue
         Set-AdServerSettings -ViewEntireForest $true
         $resultArray = @()
-        Write-Output '"Mailbox","FullAccess"'
         $Mailboxes = Get-Mailbox -ResultSize:Unlimited | Select DistinguishedName, UserPrincipalName, DisplayName, Alias,
         @{n = "OU" ; e = {$_.Distinguishedname | ForEach-Object {($_ -split '(OU=)', 2)[1, 2] -join ''}}}
-
+        
         ForEach ($Mailbox in $Mailboxes) { 
-            [string]$FullAccess = (Get-MailboxPermission $Mailbox.DistinguishedName | ? {$_.AccessRights -eq "FullAccess" -and !$_.IsInherited -and !$_.user.tostring().startswith('S-1-5-21-')} | Select -ExpandProperty User) -join "*"
+            [string]$FullAccess = (Get-MailboxPermission $Mailbox.DistinguishedName | ? {
+                    $_.AccessRights -eq "FullAccess" -and !$_.IsInherited -and !$_.user.tostring().startswith('S-1-5-21-')
+                } | Select -ExpandProperty User) -join "*"
             if ($FullAccess) {
                 ($FullAccess).split("*") | % {
                     $ADType = (Get-ADAccountType -name $_)
                     if ($ADType -eq 'User') {
-                        Get-Permitted -Display $Mailbox.DisplayName -User $_
+                        $FAHash = @{}
+                        $FAHash['Mailbox'] = ($Mailbox.DisplayName)
+                        $FAHash['FullAccess'] = ((Get-Mailbox $_).DisplayName)
+                        $resultArray += [psCustomObject]$FAHash
                     }
                     if ($ADType -eq 'Group') {
-                        Get-GroupPermitted -Display $Mailbox.DisplayName -Group $_
+                        if ($_.Contains('\')) {
+                            $Name = $_.Split('\')[1]
+                        }
+                        Get-ADGroupMember $Name -Recursive | % {
+                            $FAHash = @{}
+                            $FAHash['Mailbox'] = ($Mailbox.DisplayName)
+                            $FAHash['FullAccess'] = ((Get-Mailbox $_.distinguishedName).DisplayName)
+                            $resultArray += [psCustomObject]$FAHash
+                        }
                     }
                 } 
             } 
         }
     }
     End {
-        
+        $resultArray | Sort -Unique -Property Mailbox, FullAccess
     }
 }
-
-function Get-Permitted {
-    [CmdletBinding()]
-    Param
-    (
-        [Parameter(Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$Display,
-
-        [Parameter(Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$user
-    )
-    Begin {
-        
-    }
-    Process {
-        $FAHash = @{}
-        $FAHash['FullAccess'] = ((Get-Mailbox $user).DisplayName)
-        $FAHash['Mailbox'] = $Display
-        '"{0}","{1}"' -f ([psCustomObject]$FAHash).Mailbox, ([psCustomObject]$FAHash).FullAccess
-    }
-    End {
-
-    }
-}
-function Get-GroupPermitted {
-    [CmdletBinding()]
-    Param
-    (
-        [Parameter(Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$Display,
-    
-        [Parameter(Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$Group
-    )
-    Begin {
-
-    }
-    Process {
-        $GroupMembers = (Get-Group $Group | select -expandproperty members) -join "*" 
-        if ($GroupMembers) {
-            ($GroupMembers).split("*") | % {
-                $ADType = (Get-ADAccountType -name $_)
-                if ($ADType -eq 'User') {
-                    Get-Permitted -Display $Mailbox.DisplayName -User $_
-                }
-                if ($ADType -eq 'Group') {
-                    Get-Group $user | select -expandproperty members | % {
-                        Get-GroupPermitted -Display $Mailbox.DisplayName -Group $_
-                    }
-                }
-            }
-        }
-    }
-    End {
-        
-    }
-}
-
 
 function Get-ADAccountType {
     param (
