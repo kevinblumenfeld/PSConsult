@@ -24,8 +24,15 @@
                     if ($ADType -eq 'User') {
                         $FAHash = @{}
                         $FAHash['Mailbox'] = ($Mailbox.DisplayName)
-                        $FAHash['FullAccess'] = ((Get-Mailbox $_).DisplayName)
-                        $resultArray += [psCustomObject]$FAHash
+                        try {
+                            $FAHash['FullAccess'] = ((Get-Mailbox $_ -ErrorAction SilentlyContinue).DisplayName)
+                            if ($FAHash.FullAccess) {
+                                $resultArray += [psCustomObject]$FAHash
+                            }
+                        }
+                        Catch {
+
+                        }
                     }
                     if ($ADType -eq 'Group') {
                         if ($_.Contains('\')) {
@@ -34,8 +41,15 @@
                         Get-ADGroupMember $Name -Recursive | % {
                             $FAHash = @{}
                             $FAHash['Mailbox'] = ($Mailbox.DisplayName)
-                            $FAHash['FullAccess'] = ((Get-Mailbox $_.distinguishedName).DisplayName)
-                            $resultArray += [psCustomObject]$FAHash
+                            try {
+                                $FAHash['FullAccess'] = ((Get-Mailbox $_.distinguishedName -ErrorAction SilentlyContinue).DisplayName)
+                                if ($FAHash.FullAccess) {
+                                    $resultArray += [psCustomObject]$FAHash
+                                }
+                            }
+                            Catch {
+
+                            }
                         }
                     }
                 } 
