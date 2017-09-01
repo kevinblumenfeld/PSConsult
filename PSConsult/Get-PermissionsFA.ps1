@@ -57,11 +57,7 @@ function Get-Permitted {
         $FAHash = @{}
         $FAHash['FullAccess'] = ((Get-Mailbox $user).DisplayName)
         $FAHash['Mailbox'] = $Display
-        # [psCustomObject]$FAHash
-        $resultArray = [psCustomObject]$FAHash
-        $array = $resultArray | ForEach-Object { '"{0}","{1}"' -f $_.Mailbox, $_.FullAccess }
-        $array
-
+        [psCustomObject]$FAHash | ForEach-Object { '"{0}","{1}"' -f $_.Mailbox, $_.FullAccess }
     }
     End {
 
