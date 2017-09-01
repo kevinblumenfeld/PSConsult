@@ -20,9 +20,7 @@
                 ($FullAccess).split("*") | % {
                     $ADType = (Get-ADAccountType -name $_)
                     if ($ADType -eq 'User') {
-                        
                         Get-Permitted -Display $Mailbox.DisplayName -User $_
-                        
                     }
                     if ($ADType -eq 'Group') {
                         Get-Group $user | select -expandproperty members | % {
@@ -51,15 +49,18 @@ function Get-Permitted {
         [string]$user
     )
     Begin {
-        $resultArray = @()
+        
     }
     Process {
+        $resultArray = @()
         $FAHash = @{}
         $FAHash['FullAccess'] = ((Get-Mailbox $user).DisplayName)
         $FAHash['Mailbox'] = $Display
+        $resultArray += [psCustomObject]$FAHash
+        $resultArray
     }
     End {
-        $FAHash
+
     }
 }
 function Get-GroupPermitted {
