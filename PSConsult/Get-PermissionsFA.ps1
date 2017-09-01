@@ -24,9 +24,7 @@
                         Get-Permitted -Display $Mailbox.DisplayName -User $_
                     }
                     if ($ADType -eq 'Group') {
-                        Get-Group $user | select -expandproperty members | % {
-                            Get-GroupPermitted -Display $Mailbox.DisplayName -Group $_
-                        }
+                        Get-GroupPermitted -Display $Mailbox.DisplayName -Group $_
                     }
                 } 
             } 
@@ -56,7 +54,7 @@ function Get-Permitted {
         $FAHash = @{}
         $FAHash['FullAccess'] = ((Get-Mailbox $user).DisplayName)
         $FAHash['Mailbox'] = $Display
-        [psCustomObject]$FAHash | ForEach-Object { '"{0}","{1}"' -f $_.Mailbox, $_.FullAccess }
+        '"{0}","{1}"' -f ([psCustomObject]$FAHash).Mailbox, ([psCustomObject]$FAHash).FullAccess
     }
     End {
 
@@ -106,6 +104,10 @@ function Get-ADAccountType {
     if ($Name.Contains('\')) {
         $Domain = $Name.Split('\')[0]
         $Name = $Name.Split('\')[1]
+    }
+    elseif ($Name.Contains('/')) {
+        $Domain = $Name.Split("/")[0]
+        $Name = $Name.Split("/")[$Name.Split("/").count - 1]
     }
     $strFilter = "(&(objectCategory=*)(samAccountName=$Name))"
     if ($Domain) {
