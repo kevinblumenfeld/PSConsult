@@ -61,25 +61,94 @@
     }
 }
 
+function Get-PermissionsSOB {
+    [CmdletBinding()]
+    Param 
+    (
+
+    )
+    Begin {
+
+    }
+    Process {
+        Add-PSSnapin Microsoft.Exchange.Management.PowerShell.E2010 -EA SilentlyContinue
+        Set-AdServerSettings -ViewEntireForest $true
+        $resultArray = @()
+        $Mailboxes = Get-Mailbox -ResultSize:Unlimited | Select DistinguishedName, UserPrincipalName, DisplayName, Alias,
+        @{n = "OU" ; e = {$_.Distinguishedname | ForEach-Object {($_ -split '(OU=)', 2)[1, 2] -join ''}}}
+        
+        ForEach ($Mailbox in $Mailboxes) { 
+            [string]$SendOnBehalf = (Get-Mailbox $Mailbox.DistinguishedName | select-object -ExpandProperty GrantSendOnBehalfTo).distinguishedName -join "*"
+            if ($SendOnBehalf) {
+                ($SendOnBehalf).split("*") | % {
+                    $ADType = (Get-ADAccountType -name $_ -Sob)
+                    if ($ADType -eq 'User') {
+                        $SOBHash = @{}
+                        $SOBHash['Mailbox'] = ($Mailbox.DisplayName)
+                        try {
+                            $SOBHash['SendOnBehalf'] = ((Get-Mailbox $_ -ErrorAction SilentlyContinue).DisplayName)
+                            if ($SOBHash.SendOnBehalf) {
+                                $resultArray += [psCustomObject]$SOBHash
+                            }
+                        }
+                        Catch {
+
+                        }
+                    }
+                    if ($ADType -eq 'Group') {
+                        if ($_.Contains('\')) {
+                            $Name = $_.Split('\')[1]
+                        }
+                        Get-ADGroupMember $Name -Recursive | % {
+                            $SOBHash = @{}
+                            $SOBHash['Mailbox'] = ($Mailbox.DisplayName)
+                            try {
+                                $SOBHash['SendOnBehalf'] = ((Get-Mailbox $_.distinguishedName -ErrorAction SilentlyContinue).DisplayName)
+                                if ($SOBHash.SendOnBehalf) {
+                                    $resultArray += [psCustomObject]$SOBHash
+                                }
+                            }
+                            Catch {
+
+                            }
+                        }
+                    }
+                } 
+            } 
+        }
+    }
+    End {
+        $resultArray | Sort -Unique -Property Mailbox, SendOnBehalf
+    }
+}
 function Get-ADAccountType {
     param (
-        [string] $Name
+        [string] $Name,
+        [switch] $Sob
     )
-    if ($Name.Contains('\')) {
-        $Domain = $Name.Split('\')[0]
-        $Name = $Name.Split('\')[1]
+    if (!$Sob) {
+        if ($Name.Contains('\')) {
+            $Domain = $Name.Split('\')[0]
+            $Name = $Name.Split('\')[1]
+        }
+        elseif ($Name.Contains('/')) {
+            $Domain = $Name.Split("/")[0]
+            $Name = $Name.Split("/")[$Name.Split("/").count - 1]
+        }
+        $strFilter = "(&(objectCategory=*)(samAccountName=$Name))"
+        if ($Domain) {
+            $objSearcher = New-Object System.DirectoryServices.DirectorySearcher([ADSI]"LDAP://$Domain")
+        }
+        Else {
+            $objSearcher = New-Object System.DirectoryServices.DirectorySearcher
+        }
     }
-    elseif ($Name.Contains('/')) {
-        $Domain = $Name.Split("/")[0]
-        $Name = $Name.Split("/")[$Name.Split("/").count - 1]
-    }
-    $strFilter = "(&(objectCategory=*)(samAccountName=$Name))"
-    if ($Domain) {
+    if ($Sob) {
+        $strFilter = "(&(objectCategory=*)(distinguishedname=$Name))"
+        $Domain = (($name -Split '(,DC=)',2)[2]).Replace(',DC=', ".")
         $objSearcher = New-Object System.DirectoryServices.DirectorySearcher([ADSI]"LDAP://$Domain")
     }
-    Else {
-        $objSearcher = New-Object System.DirectoryServices.DirectorySearcher
-    }
+
     $objSearcher.Filter = $strFilter
     try {
         $objPath = $objSearcher.FindOne()
