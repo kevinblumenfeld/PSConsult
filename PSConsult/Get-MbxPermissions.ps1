@@ -264,44 +264,41 @@ function ConvertTo-DistinguishedName {
         $CanonicalName
     )
  
-    # separate into (a.b.c.d) and (/w/x/y/z) parts
-    $domain, $path = $CanonicalName.split('/', 2)
+    $distinguishedNameParts = New-Object -TypeName System.Collections.ArrayList
  
-    # process the domain into DC=a,DC=b,DC=c,DC=d
-    $domain = $domain.Split('.')
-    $domain = $domain.ForEach( {"DC=$_"}) -join ','
- 
-    # split the path into components and reverse their order
-    $Path = $Path.Split('/')
-    [array]::Reverse($path)
- 
-    # take the first one out as the CN, second as special case, remainder
-    $cn, $fp, $path = $Path
- 
-    # prefix the first component as it will always be CN=
-    # as far as we know. Not necessarily true, but can't be sure without
-    # contacting AD and checking if it's an OU
-    $cn = "CN=$cn"
- 
-    $convertedPath = @($cn)
- 
-    # handle the special case item, add OU= or CN= as appropriate
-    if ($fp) {
-        $fp = if ($fp -in ('Users', 'Computers', 'Domaincontrollers')) {"CN=$fp"} else {"OU=$fp"}
-        $convertedPath += $fp
-    }
+    # separate into domain part (a.b.c.d) and path+user part (/x/y/z/Person)
+    [string]$domain, [array]$remainder = $CanonicalName.Split('/')
      
-    # Add OU= to the remaining path components, if any.
-    if ($path) {
-        $path = $path.ForEach( {"OU=$_"})
-        $convertedPath += $path
+    #
+    # domain:  'a.b.c.d' -> 'DC=a,DC=b,DC=c,DC=d'
+    #
+    $null = $distinguishedNameParts.AddRange($domain.Split('.').ForEach( {"DC=$_"}))
+ 
+    $specialContiners = @('Users', 'Computers')
+ 
+    0..($remainder.Count - 1) | ForEach-Object {
+ 
+        #
+        # handle domain.com/{first} which might be
+        #   OU={first}
+        # or a special container 
+        #   CN={first}
+        #
+        # and handle /Person at the end, which is CN=
+        # all other parts are OU=
+        #
+        $template = if ((($_ -eq 0) -and ($specialContiners -contains $remainder[$_])) -or ($_ -eq ($remainder.Count - 1))) {
+            'CN={0}'
+        }
+        else {
+            'OU={0}'
+        }
+ 
+        $null = $distinguishedNameParts.Insert(0, ($template -f $remainder[$_]))
+     
     }
  
-    # Join the new path back up
-    $convertedpath = $convertedPath -join ','
- 
-    # Join the domain and path
-    @($convertedPath, $domain) -join ','
+    $distinguishedNameParts -join ','
  
 }
  
