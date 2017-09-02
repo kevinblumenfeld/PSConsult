@@ -274,7 +274,7 @@ function ConvertTo-DistinguishedName {
     #
     $null = $distinguishedNameParts.AddRange($domain.Split('.').ForEach( {"DC=$_"}))
  
-    $specialContiners = @('Users', 'Computers')
+    $specialContainers = @('Users', 'Computers')
  
     0..($remainder.Count - 1) | ForEach-Object {
  
@@ -287,7 +287,7 @@ function ConvertTo-DistinguishedName {
         # and handle /Person at the end, which is CN=
         # all other parts are OU=
         #
-        $template = if ((($_ -eq 0) -and ($specialContiners -contains $remainder[$_])) -or ($_ -eq ($remainder.Count - 1))) {
+        $template = if ((($_ -eq 0) -and ($specialContainers -contains $remainder[$_])) -or ($_ -eq ($remainder.Count - 1))) {
             'CN={0}'
         }
         else {
