@@ -243,7 +243,7 @@ function Get-ADAccountType {
    Converts an AD canonical name into a distinguished name.
 .DESCRIPTION
    Converts an AD canonical name into a distinguished name, and handles
-   the case where USERS, DOMAINCONTROLLERS, COMPUTERS are containers not OUs
+   the case where USERS, COMPUTERS etc. are containers not OUs
    and need to be CN= instead of OU=
 .EXAMPLE
    PS C:\> ConvertTo-DistinguishedName "corp.ad.contoso.com/CORP/Place/on02"
@@ -272,12 +272,11 @@ function ConvertTo-DistinguishedName {
     #
     # domain:  'a.b.c.d' -> 'DC=a,DC=b,DC=c,DC=d'
     #
-    $null = $distinguishedNameParts.AddRange($domain.Split('.').ForEach( {"DC=$_"}))
+    $null = $distinguishedNameParts.AddRange($domain.Split('.').ForEach({"DC=$_"}))
  
-    $specialContainers = @('Users', 'Computers')
+    $specialContainers = @('Users', 'Computers', 'Builtin', 'ForeignSecurityPrincipals', 'lostAndFound', 'Managed Service Accounts','Program Data', 'Microsoft Exchange System Objects')
  
     0..($remainder.Count - 1) | ForEach-Object {
- 
         #
         # handle domain.com/{first} which might be
         #   OU={first}
@@ -293,12 +292,7 @@ function ConvertTo-DistinguishedName {
         else {
             'OU={0}'
         }
- 
         $null = $distinguishedNameParts.Insert(0, ($template -f $remainder[$_]))
-     
     }
- 
     $distinguishedNameParts -join ','
- 
 }
- 
