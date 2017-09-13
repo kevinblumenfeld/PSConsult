@@ -1,4 +1,4 @@
-Get-ADGroup -Filter 'proxyaddresses -ne "$null"' -ResultSetSize $null -Properties * -searchBase "DC=GALLS,DC=local" |
+Get-ADGroup -Filter 'proxyaddresses -ne "$null"' -ResultSetSize $null -Properties * -searchBase "DC=CONTOSO,DC=local" |
     select name, samaccountname, DisplayName,
 @{n = "OU" ; e = {$_.Distinguishedname | ForEach-Object {($_ -split '(OU=)', 2)[1, 2] -join ''}}},
 @{n = "PrimarySMTP" ; e = {( $_.proxyAddresses | ? {$_ -cmatch "SMTP:*"}).Substring(5) -join ";" }},
