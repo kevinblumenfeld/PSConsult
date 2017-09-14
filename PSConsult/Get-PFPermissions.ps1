@@ -12,8 +12,4 @@ Get-MailPublicFolder | Get-ADPermission |  ? { ($_.ExtendedRights-like "Send-as*
 AccessRights
 Get-PublicFolder -Recurse | Get-PublicFolderClientPermission | select Identity,User,@{Name='Access Rights';Expression={[string]::join(', ', $_.AccessRights)}} | Export-Csv PF2010permissionsACCESSRIGHTS.csv -NTI
 
-SendonBehalf
-Get-MAILPublicFolder -Recurse | Get-PublicFolderClientPermission | select Identity,User,@{Name='GrantSendOnBehalfTo';Expression={[string]::join(', ', $_.GrantSendOnBehalfTo)}} | Export-Csv PF2010permissionsSENDONBEHALF.csv -NTI
-
-SendAs
-Get-MailPublicFolder | Get-ADPermission |  ? { ($_.ExtendedRights-like "Send-as*") -or ($_.AccessRights  -eq "GenericAll") -and ($_.User -Notlike "NT AUTHORITY\SYSTEM") }| select identity, user, AccessRights, ExtendedRights | Export-Csv PF2010permissionsSENDAS.csv -NTI
+# check PoshPermissionTree for SA and SOB permission to Legacy 2010 PFs
