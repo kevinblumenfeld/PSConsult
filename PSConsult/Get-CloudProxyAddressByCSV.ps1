@@ -1,3 +1,4 @@
+# needs to be tested
 $resultArray = @()
 $mailboxes = Import-Csv .\cloudupn.csv 
 foreach ($mailbox in $mailboxes) {
@@ -6,6 +7,6 @@ foreach ($mailbox in $mailboxes) {
 @{n = "smtp" ; e = {( $_.EmailAddresses | ? {$_ -cmatch "smtp:*"}).Substring(5) -join ";" }},
 @{n = "SIP" ; e = {( $_.EmailAddresses | ? {$_ -like "SIP:*"}).Substring(4) -join ";" }},
 @{n = "x500" ; e = {( $_.EmailAddresses | ? {$_ -like "X500:*"}).Substring(0) -join ";" }} 
-    $resultArray += $all
+    $resultArray += $each
 }
     $resultArray #Export-Csv 365mailboxes.csv -NTI
