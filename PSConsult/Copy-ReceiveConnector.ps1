@@ -13,6 +13,7 @@
 
     .LINK 
     More information can be found at http://www.granikos.eu/en/scripts
+    https://gallery.technet.microsoft.com/Copy-a-receive-connector-b20b9bef 
 
     .DESCRIPTION 
     This script copies a receive connector from a source Exchange Server to a single target Exchange server or to all Exchange servers.
@@ -182,7 +183,9 @@ function Copy-ToServer {
         -EnableAuthGSSAPI $sourceRC.EnableAuthGSSAPI `
         -ExtendedProtectionPolicy $sourceRC.ExtendedProtectionPolicy `
         -SizeEnabled $sourceRC.SizeEnabled `
-        -TarpitInterval $sourceRC.TarpitInterval `        -EnhancedStatusCodesEnabled  $sourceRC.EnhancedStatusCodesEnabled `        -Server $TargetServerName `
+        -TarpitInterval $sourceRC.TarpitInterval `
+        -EnhancedStatusCodesEnabled  $sourceRC.EnhancedStatusCodesEnabled `
+        -Server $TargetServerName `
         -AuthMechanism $sourceRC.AuthMechanism
 
         if($CopyPermissions) {
@@ -248,7 +251,8 @@ function Copy-ToServer {
                 -EnableAuthGSSAPI $sourceRC.EnableAuthGSSAPI `
                 -ExtendedProtectionPolicy $sourceRC.ExtendedProtectionPolicy `
                 -SizeEnabled $sourceRC.SizeEnabled `
-                -TarpitInterval $sourceRC.TarpitInterval `                -EnhancedStatusCodesEnabled  $sourceRC.EnhancedStatusCodesEnabled `
+                -TarpitInterval $sourceRC.TarpitInterval `
+                -EnhancedStatusCodesEnabled  $sourceRC.EnhancedStatusCodesEnabled `
                 -AuthMechanism $sourceRC.AuthMechanism 
 #                -Bindings $targetRC.Bindings `
 #                -TransportRole $sourceRC.TransportRole `
