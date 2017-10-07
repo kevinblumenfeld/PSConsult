@@ -1,5 +1,5 @@
 
-### Distribution Group ###
+### Distribution Groups ###
 
 # Assign in Cloud #
 Get-DistributionGroup "GroupPerm" | Add-RecipientPermission -Trustee "Cloud01" -AccessRights SendAs
