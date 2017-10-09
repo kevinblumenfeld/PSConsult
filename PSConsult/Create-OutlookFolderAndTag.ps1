@@ -1,5 +1,7 @@
 # The script requires the EWS managed API, which can be downloaded here:
 # https://www.microsoft.com/en-us/download/details.aspx?id=42951
+# For Exchange 2010 or lower use EWS 1.1
+# https://www.microsoft.com/en-us/download/details.aspx?id=28952
 # This also requires PowerShell 2.0 or higher
 # Make sure the Import-Module command below matches the DLL location of the API.
 # This path must match the install location of the EWS managed API. Change it if needed.
@@ -114,7 +116,8 @@ function StampPolicyOnFolder {
 #             SCRIPT               #
 ####################################
 
-Import-Module -Name "C:\Program Files\Microsoft\Exchange\Web Services\2.2\Microsoft.Exchange.WebServices.dll"
+Import-Module -Name "C:\Program Files\Microsoft\Exchange\Web Services\1.2\Microsoft.Exchange.WebServices.dll"
+# Import-Module -Name "C:\Program Files\Microsoft\Exchange\Web Services\2.2\Microsoft.Exchange.WebServices.dll"
 
 $service = New-Object Microsoft.Exchange.WebServices.Data.ExchangeService([Microsoft.Exchange.WebServices.Data.ExchangeVersion]::Exchange2013_SP1)
 
@@ -142,12 +145,12 @@ $UseAutoDiscover = $false
 
 #Read data from the UserAccounts.txt
 import-csv .\Mailboxes.txt | foreach-object {
-    $WindowsEmailAddress = $_.WindowsEmailAddress.ToString()
+    $PrimarySmtpAddress = $_.PrimarySmtpAddress.ToString()
 
     if ($UseAutoDiscover -eq $true) {
         Write-host "Autodiscovering.." -foregroundcolor "White"
         $UseAutoDiscover = $false
-        $service.AutodiscoverUrl($WindowsEmailAddress)
+        $service.AutodiscoverUrl($PrimarySmtpAddress)
         Write-host "Autodiscovering Done!" -foregroundcolor "White"
         Write-host "EWS URL set to :" $service.Url -foregroundcolor "White"
 
@@ -166,16 +169,16 @@ import-csv .\Mailboxes.txt | foreach-object {
     #     mailboxes.txt     #
     # should look like this #
     #-----------------------#
-    # WindowsEmailAddress   #
+    # PrimarySmtpAddress   #
     # mailbox01@contoso.com #
     # mailbox02@contoso.com #
     # mailbox03@contoso.com #
     #########################
     
-    CreateFolder -Email $WindowsEmailAddress -Folder "Test Folder1"
-    StampPolicyOnFolder -Email $WindowsEmailAddress -Folder "Test Folder1" -RetID "8a6e3718-26cf-445d-b203-4ca58d2508a8"
-    CreateFolder -Email $WindowsEmailAddress -Folder "Test Folder2"
-    StampPolicyOnFolder -Email $WindowsEmailAddress -Folder "Test Folder2" -RetID "8a6e3718-26cf-445d-b203-4ca58d2508a8"
-    CreateFolder -Email $WindowsEmailAddress -Folder "Test Folder3"
-    StampPolicyOnFolder -Email $WindowsEmailAddress -Folder "Test Folder3" -RetID "8a6e3718-26cf-445d-b203-4ca58d2508a8"
+    CreateFolder -Email $PrimarySmtpAddress -Folder "Test Folder1"
+    StampPolicyOnFolder -Email $PrimarySmtpAddress -Folder "Test Folder1" -RetID "8a6e3718-26cf-445d-b203-4ca58d2508a8"
+    CreateFolder -Email $PrimarySmtpAddress -Folder "Test Folder2"
+    StampPolicyOnFolder -Email $PrimarySmtpAddress -Folder "Test Folder2" -RetID "8a6e3718-26cf-445d-b203-4ca58d2508a8"
+    CreateFolder -Email $PrimarySmtpAddress -Folder "Test Folder3"
+    StampPolicyOnFolder -Email $PrimarySmtpAddress -Folder "Test Folder3" -RetID "8a6e3718-26cf-445d-b203-4ca58d2508a8"
 }
