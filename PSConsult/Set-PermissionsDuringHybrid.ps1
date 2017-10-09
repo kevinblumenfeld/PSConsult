@@ -4,7 +4,7 @@
 # Assign in Cloud #
 Get-DistributionGroup "GroupPerm" | Add-RecipientPermission -Trustee "Cloud01" -AccessRights SendAs
 # Assign on-Premises #
-Get-DistributionGroup "GroupPerm" | Set-DistributionGroup -GrantSendOnBehalfTo "Cloud01"
+Get-DistributionGroup "GroupPerm" | Set-DistributionGroup -GrantSendOnBehalfTo "Mailbox02"
 
 ### Mailboxes ###
 
