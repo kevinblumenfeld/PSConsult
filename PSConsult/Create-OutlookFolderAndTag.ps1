@@ -3,6 +3,11 @@
 # This also requires PowerShell 2.0 or higher
 # Make sure the Import-Module command below matches the DLL location of the API.
 # This path must match the install location of the EWS managed API. Change it if needed.
+# For On-Prem Exchange change URL of CAS Server
+# For On-Prem Exchange and EXO give impersonation rights to the service account you will use:
+# New-ManagementRoleAssignment –Name:impersonationAssignmentName –Role:ApplicationImpersonation –User:serviceAccount
+# Scroll to bottom of script for mailboxes.txt example and to specify which folders are to be created and tagged (by Retention Policy Tags)
+# Place this script and the mailboxes.txt file in the folder c:\scripts
 
 [string]$LogFile = "C:\Scripts\Log.txt"   # Path of the Log File
 function CreateFolder {
