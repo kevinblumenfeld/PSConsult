@@ -153,7 +153,21 @@ import-csv .\Mailboxes.txt | foreach-object {
     ########################    
     ## CALL EACH FUNCTION ##
     ########################
+
+    #########################
+    #     mailboxes.txt     #
+    # should look like this #
+    #-----------------------#
+    # WindowsEmailAddress   #
+    # mailbox01@contoso.com #
+    # mailbox02@contoso.com #
+    # mailbox03@contoso.com #
+    #########################
     
+    CreateFolder -Email $WindowsEmailAddress -Folder "Test Folder1"
+    StampPolicyOnFolder -Email $WindowsEmailAddress -Folder "Test Folder1" -RetID "8a6e3718-26cf-445d-b203-4ca58d2508a8"
+    CreateFolder -Email $WindowsEmailAddress -Folder "Test Folder2"
+    StampPolicyOnFolder -Email $WindowsEmailAddress -Folder "Test Folder2" -RetID "8a6e3718-26cf-445d-b203-4ca58d2508a8"
     CreateFolder -Email $WindowsEmailAddress -Folder "Test Folder3"
     StampPolicyOnFolder -Email $WindowsEmailAddress -Folder "Test Folder3" -RetID "8a6e3718-26cf-445d-b203-4ca58d2508a8"
 }
