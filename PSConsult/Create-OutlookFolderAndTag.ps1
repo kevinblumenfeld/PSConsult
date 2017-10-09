@@ -7,7 +7,10 @@
 # For On-Prem Exchange and EXO give impersonation rights to the service account you will use:
 # New-ManagementRoleAssignment –Name:impersonationAssignmentName –Role:ApplicationImpersonation –User:serviceAccount
 # Scroll to bottom of script for mailboxes.txt example and to specify which folders are to be created and tagged (by Retention Policy Tags)
+# Replace GUID specified with -RetID with the RETENTIONID of the retention policy tag. Find the Retention ID with this PowerShell cmd:
+# Get-RetentionPolicyTag | FT name, RetentionId
 # Place this script and the mailboxes.txt file in the folder c:\scripts
+
 
 [string]$LogFile = "C:\Scripts\Log.txt"   # Path of the Log File
 function CreateFolder {
