@@ -1,6 +1,6 @@
 # The script requires the EWS managed API, which can be downloaded here:
-# http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=c3342fb3-fbcc-4127-becf-872c746840e1
-# This also requires PowerShell 2.0
+# https://www.microsoft.com/en-us/download/details.aspx?id=42951
+# This also requires PowerShell 2.0 or higher
 # Make sure the Import-Module command below matches the DLL location of the API.
 # This path must match the install location of the EWS managed API. Change it if needed.
 
