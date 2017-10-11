@@ -1,2 +1,0 @@
-WindowsEmailAddress
-tag03@contoso.com

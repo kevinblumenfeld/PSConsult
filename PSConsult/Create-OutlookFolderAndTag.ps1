@@ -1,7 +1,9 @@
 # The script requires the EWS managed API, which can be downloaded here:
 # https://www.microsoft.com/en-us/download/details.aspx?id=42951
-# For Exchange 2010 or lower use EWS 1.1
+# For Exchange 2010 or lower use EWS 1.2, download here:
 # https://www.microsoft.com/en-us/download/details.aspx?id=28952
+# Also comment out: Import-Module -Name "C:\Program Files\Microsoft\Exchange\Web Services\2.2\Microsoft.Exchange.WebServices.dll"
+# and uncomment out Import-Module -Name "C:\Program Files\Microsoft\Exchange\Web Services\1.2\Microsoft.Exchange.WebServices.dll"
 # This also requires PowerShell 2.0 or higher
 # Make sure the Import-Module command below matches the DLL location of the API.
 # This path must match the install location of the EWS managed API. Change it if needed.
@@ -116,8 +118,8 @@ function StampPolicyOnFolder {
 #             SCRIPT               #
 ####################################
 
-Import-Module -Name "C:\Program Files\Microsoft\Exchange\Web Services\1.2\Microsoft.Exchange.WebServices.dll"
-# Import-Module -Name "C:\Program Files\Microsoft\Exchange\Web Services\2.2\Microsoft.Exchange.WebServices.dll"
+# Import-Module -Name "C:\Program Files\Microsoft\Exchange\Web Services\1.2\Microsoft.Exchange.WebServices.dll"
+Import-Module -Name "C:\Program Files\Microsoft\Exchange\Web Services\2.2\Microsoft.Exchange.WebServices.dll"
 
 $service = New-Object Microsoft.Exchange.WebServices.Data.ExchangeService([Microsoft.Exchange.WebServices.Data.ExchangeVersion]::Exchange2013_SP1)
 
@@ -169,7 +171,7 @@ import-csv .\Mailboxes.txt | foreach-object {
     #     mailboxes.txt     #
     # should look like this #
     #-----------------------#
-    # PrimarySmtpAddress   #
+    # PrimarySmtpAddress    #
     # mailbox01@contoso.com #
     # mailbox02@contoso.com #
     # mailbox03@contoso.com #
