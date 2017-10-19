@@ -1,3 +1,13 @@
+<#
+    .SYNOPSIS
+    Export key attributes for any ADUSer that has data in the proxyaddresses attribute.
+
+    .EXAMPLE
+    Export key attributes for any ADUSer that has data in the proxyaddresses attribute, where PrimarySMTPAddress does not match UPN.
+    If the user does not have a PrimarySMTPAddress no data is given for that user.
+    
+    #>
+
 $params = @{
     SearchBase = (Get-ADDomain).DistinguishedName
     Filter     = { proxyAddresses -like '*' }
@@ -16,5 +26,4 @@ Get-ADUser @params |
                 ForEach-Object { $_.Substring(5) } |
                 Where-Object { $_ -ne $upn }) -join ', '
         }} |
-    Where-Object { $_.PrimarySMTP } |
-    Export-Csv .\primarySMTPnotMatchUPN.csv -NoTypeInformation
+    Where-Object { $_.PrimarySMTP }
