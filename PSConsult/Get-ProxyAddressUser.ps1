@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-    Export key attributes for any ADUSer that has a data in the proxyaddresses attribute.
+    Export key attributes for any ADUSer that has data in the proxyaddresses attribute.
 
     .EXAMPLE
     .\Get-ProxyAddressUser.ps1 | Export-Csv .\ADUsers.csv -notypeinformation
