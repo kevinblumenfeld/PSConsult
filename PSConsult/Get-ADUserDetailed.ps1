@@ -7,18 +7,18 @@
     
     #>
 
-    $properties = @('DisplayName', 'Title', 'Office', 'Department', 'Division'
+$properties = @('DisplayName', 'Title', 'Office', 'Department', 'Division'
     'Company', 'Organization', 'EmployeeID', 'EmployeeNumber', 'Description', 'GivenName'
     'Surname', 'StreetAddress', 'City', 'State', 'PostalCode', 'Country', 'countryCode'
-    'physicalDeliveryOfficeName','POBox', 'MobilePhone', 'OfficePhone', 'HomePhone', 'Fax', 'cn'
-    'mailnickname','samaccountname', 'UserPrincipalName', 'proxyAddresses'
+    'POBox', 'MobilePhone', 'OfficePhone', 'HomePhone', 'Fax', 'cn'
+    'mailnickname', 'samaccountname', 'UserPrincipalName', 'proxyAddresses'
     'Distinguishedname', 'legacyExchangeDN', 'EmailAddress')
 
 $Selectproperties = @('DisplayName', 'Title', 'Office', 'Department', 'Division'
     'Company', 'Organization', 'EmployeeID', 'EmployeeNumber', 'Description', 'GivenName'
     'Surname', 'StreetAddress', 'City', 'State', 'PostalCode', 'Country', 'countryCode'
-    'physicalDeliveryOfficeName','POBox', 'MobilePhone', 'OfficePhone', 'HomePhone', 'Fax', 'cn'
-    'mailnickname','samaccountname', 'UserPrincipalName', 'Distinguishedname',
+    'POBox', 'MobilePhone', 'OfficePhone', 'HomePhone', 'Fax', 'cn'
+    'mailnickname', 'samaccountname', 'UserPrincipalName', 'Distinguishedname',
     'legacyExchangeDN', 'EmailAddress')
 
 $CalculatedProps = @(@{n = "OU" ; e = {$_.Distinguishedname | ForEach-Object {($_ -split '(OU=)', 2)[1, 2] -join ''}}},
