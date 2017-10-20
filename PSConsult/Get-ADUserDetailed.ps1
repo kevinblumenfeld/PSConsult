@@ -3,21 +3,21 @@
     Export key attributes for any ADUSer that has data in the proxyaddresses attribute.
 
     .EXAMPLE
-    .\Get-ADUserDetailed.ps1 | Export-Csv .\ADUsersDetailed.csv -notypeinformation
+    .\Get-ADUserDetailed.ps1 | Export-Csv .\ADUsersDetailed.csv -notypeinformation -Encoding UTF8
     
     #>
 
     $properties = @('DisplayName', 'Title', 'Office', 'Department', 'Division'
     'Company', 'Organization', 'EmployeeID', 'EmployeeNumber', 'Description', 'GivenName'
     'Surname', 'StreetAddress', 'City', 'State', 'PostalCode', 'Country', 'countryCode'
-    'POBox', 'MobilePhone', 'OfficePhone', 'HomePhone', 'Fax', 'cn'
+    'physicalDeliveryOfficeName','POBox', 'MobilePhone', 'OfficePhone', 'HomePhone', 'Fax', 'cn'
     'mailnickname','samaccountname', 'UserPrincipalName', 'proxyAddresses'
     'Distinguishedname', 'legacyExchangeDN', 'EmailAddress')
 
 $Selectproperties = @('DisplayName', 'Title', 'Office', 'Department', 'Division'
     'Company', 'Organization', 'EmployeeID', 'EmployeeNumber', 'Description', 'GivenName'
     'Surname', 'StreetAddress', 'City', 'State', 'PostalCode', 'Country', 'countryCode'
-    'POBox', 'MobilePhone', 'OfficePhone', 'HomePhone', 'Fax', 'cn'
+    'physicalDeliveryOfficeName','POBox', 'MobilePhone', 'OfficePhone', 'HomePhone', 'Fax', 'cn'
     'mailnickname','samaccountname', 'UserPrincipalName', 'Distinguishedname',
     'legacyExchangeDN', 'EmailAddress')
 
