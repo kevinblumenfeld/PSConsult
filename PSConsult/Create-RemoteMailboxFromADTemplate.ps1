@@ -47,8 +47,9 @@ Param (
 
     .EXAMPLE
 
-    .\Create-RemoteMailboxFromADTemplate.ps1 -givenname Kevin -surname White -template SmithJ
+    .\Create-RemoteMailboxFromADTemplate.ps1 -FirstName Kevin -LastName Jones -Mobile "678-437-7468" -StorePhone "678-437-7468,,1234" -Description "This is a test Description"  -Template raela
 
+    .\Create-RemoteMailboxFromADTemplate.ps1 -NoMail -FirstName Kevin -LastName Smith -Mobile "404-555-1212" -StorePhone "800-486-8555,,8845" -Description "This Person Has No Mailbox"  -Template raela
     
     #>
 #######################################
