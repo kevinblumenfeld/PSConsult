@@ -60,8 +60,8 @@ function Set-AttributesADUser {
             # Remove ForEach after testing
             $Proxies = (($User.x500 -split ";") | % {$_})
 
-            # Collect from CSV and SIP Addresses (for Addition)
-            
+            # Collect from CSV any SIP Addresses (for Addition)
+
 
             # Removing any existing Primary SMTP: Addresses for the Target ADUser (to make way for 1 new Primary SMTP Address)
             if ($primary) {
