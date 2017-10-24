@@ -15,33 +15,33 @@ function Set-AttributesADUser {
         $Users
     )
     Begin {
-        $hash = @{
-            identity          = $User.SamAccountNameTarget
-            Title             = $User.Title
-            Office            = $User.Office
-            Department        = $User.Department
-            Division          = $User.Division
-            Company           = $User.Company
-            Organization      = $User.Organization
-            EmployeeID        = $User.EmployeeID
-            EmployeeNumber    = $User.EmployeeNumber
-            Description       = $User.Description
-            StreetAddress     = $User.StreetAddress
-            City              = $User.City
-            State             = $User.State
-            PostalCode        = $User.PostalCode
-            Country           = $User.Country
-            POBox             = $User.POBox
-            MobilePhone       = $User.MobilePhone
-            OfficePhone       = $User.OfficePhone
-            HomePhone         = $User.HomePhone
-            Fax               = $User.Fax
-            UserPrincipalName = $User.UserPrincipalName
-        }
 
     }
     Process {
         ForEach ($User in $Users) {
+            $hash = @{
+                identity          = $User.SamAccountNameTarget
+                Title             = $User.Title
+                Office            = $User.Office
+                Department        = $User.Department
+                Division          = $User.Division
+                Company           = $User.Company
+                Organization      = $User.Organization
+                EmployeeID        = $User.EmployeeID
+                EmployeeNumber    = $User.EmployeeNumber
+                Description       = $User.Description
+                StreetAddress     = $User.StreetAddress
+                City              = $User.City
+                State             = $User.State
+                PostalCode        = $User.PostalCode
+                Country           = $User.Country
+                POBox             = $User.POBox
+                MobilePhone       = $User.MobilePhone
+                OfficePhone       = $User.OfficePhone
+                HomePhone         = $User.HomePhone
+                Fax               = $User.Fax
+                UserPrincipalName = $User.UserPrincipalName
+            }
             $params = @{}
             ForEach ($h in $hash.keys) {
                 if ($($hash.item($h))) {
