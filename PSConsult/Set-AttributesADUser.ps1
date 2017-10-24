@@ -48,12 +48,27 @@ function Set-AttributesADUser {
                     $params.add($h, $($hash.item($h)))
                 }
             }
+
+            # Collect Existing Primary SMTP Addresses (for Removal)
             $Primary = (Get-ADUser -Filter "samaccountname -eq '$($user.samaccountnameTarget)'" -searchBase (Get-ADDomain).distinguishedname -SearchScope SubTree -properties proxyaddresses | Select @{n = "PrimarySMTP" ; e = {( $_.proxyAddresses | ? {$_ -cmatch "SMTP:"}).Substring(5) -join ";" }}).PrimarySMTP
+
+            # Collect from CSV any SMTP Addresses (for Addition)
             $Proxies = (($User.smtp -split ";") | % {"smtp:" + $_ })
             $Proxies += ("SMTP:" + $($user.primarysmtpaddress))
+
+            # Collect from CSV any x500 Addresses (for Addition)
+            # Remove ForEach after testing
+            $Proxies = (($User.x500 -split ";") | % {$_})
+
+            # Collect from CSV and SIP Addresses (for Addition)
+            
+
+            # Removing any existing Primary SMTP: Addresses for the Target ADUser (to make way for 1 new Primary SMTP Address)
             if ($primary) {
                 Set-ADUser -identity $User.SamAccountNameTarget -remove @{proxyaddresses = (($Primary -split ";") | % {"SMTP:" + $_ })}
             }
+
+            # Setting AD User
             Set-ADUser @params -add @{proxyaddresses = $Proxies} 
         }
     }
