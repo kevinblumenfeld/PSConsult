@@ -1,12 +1,12 @@
-function Set-AttributesADUser {
+function New-AttributesADUser {
     <#
 
     .SYNOPSIS
     Set attribute for AD Users including proxy addresses. 
     
     .EXAMPLE
-    . .\Set-AttributesADUser.ps1
-    Import-Csv ./test.csv | Set-AttributesADUser 
+    . .\New-AttributesADUser.ps1
+    Import-Csv ./test.csv | New-AttributesADUser 
 
     #>
     Param 
@@ -21,8 +21,11 @@ function Set-AttributesADUser {
     Process {
         ForEach ($User in $Users) {
             $hash = @{
-                identity          = $User.SamAccountNameTarget
+                Name              = $User.SamAccountNameTarget
                 Title             = $User.Title
+                DisplayName       = $User.DisplayName
+                GivenName         = $User.GivenName
+                Surname           = $User.Surname
                 Office            = $User.Office
                 Department        = $User.Department
                 Division          = $User.Division
@@ -50,9 +53,6 @@ function Set-AttributesADUser {
                 }
             }
 
-            # Collect Existing Primary SMTP Addresses (for Removal)
-            $Primary = (Get-ADUser -Filter "samaccountname -eq '$($user.samaccountnameTarget)'" -searchBase (Get-ADDomain).distinguishedname -SearchScope SubTree -properties proxyaddresses | Select @{n = "PrimarySMTP" ; e = {( $_.proxyAddresses | ? {$_ -cmatch "SMTP:"}).Substring(5) -join ";" }}).PrimarySMTP
-
             # Collect from CSV any SMTP Addresses (for Addition)
             $Proxies = (($User.smtp -split ";") | % {"smtp:" + $_ })
             $Proxies += ("SMTP:" + $($user.primarysmtpaddress))
@@ -63,13 +63,9 @@ function Set-AttributesADUser {
             # Collect from CSV any SIP Addresses (for Addition)
 
 
-            # Removing any existing Primary SMTP: Address(es) from the Target ADUser (to make way for 1 new Primary SMTP Address)
-            if ($primary) {
-                Set-ADUser -identity $User.SamAccountNameTarget -remove @{proxyaddresses = (($Primary -split ";") | % {"SMTP:" + $_ })}
-            }
-
             # Setting AD User
-            Set-ADUser @params -add @{proxyaddresses = $Proxies} 
+            New-ADUser @params
+            Set-ADUser -identity $User.SamAccountNameTarget -add @{proxyaddresses = $Proxies} -Enabled
         }
     }
 
