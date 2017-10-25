@@ -69,7 +69,22 @@ function Set-AttributesADUser {
             }
 
             # Setting AD User
-            Set-ADUser @params -add @{proxyaddresses = $Proxies} 
+            Set-ADUser @params -add @{proxyaddresses = $Proxies}
+            
+            # Set Exchange attributes
+            if ($user.msExchRecipientDisplayType) {
+                Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRecipientDisplayType = $user.msExchRecipientDisplayType}
+            }
+            if ($user.msExchRecipientTypeDetails) {
+                Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRecipientDisplayType = $user.msExchRecipientTypeDetails}
+            }
+            if ($user.msExchRemoteRecipientType) {
+                Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRecipientDisplayType = $user.msExchRemoteRecipientType}
+            }
+            if ($user.targetaddress) {
+                Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRecipientDisplayType = $user.targetaddress}                
+            }
+            
         }
     }
 
