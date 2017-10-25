@@ -76,13 +76,13 @@ function Set-AttributesADUser {
                 Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRecipientDisplayType = $user.msExchRecipientDisplayType}
             }
             if ($user.msExchRecipientTypeDetails) {
-                Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRecipientDisplayType = $user.msExchRecipientTypeDetails}
+                Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRecipientTypeDetails = $user.msExchRecipientTypeDetails}
             }
             if ($user.msExchRemoteRecipientType) {
-                Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRecipientDisplayType = $user.msExchRemoteRecipientType}
+                Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRemoteRecipientType = $user.msExchRemoteRecipientType}
             }
             if ($user.targetaddress) {
-                Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRecipientDisplayType = $user.targetaddress}                
+                Set-ADUser -identity $User.SamAccountNameTarget -replace @{targetaddress = $user.targetaddress}                
             }
             
         }
