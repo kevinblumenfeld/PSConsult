@@ -4,7 +4,8 @@ function Set-AttributesADUser {
     .SYNOPSIS
     Set attribute for AD Users including proxy addresses. 
     
-    .EXAMPLE 
+    .EXAMPLE
+    . .\Set-AttributesADUser.ps1
     Import-Csv ./test.csv | Set-AttributesADUser 
 
     #>
