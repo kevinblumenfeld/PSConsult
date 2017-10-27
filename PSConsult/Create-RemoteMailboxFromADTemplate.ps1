@@ -11,6 +11,8 @@ Param (
     [Parameter(Mandatory = $False)]
     $Description,
     [Parameter(Mandatory = $True)]    
+    $Prefix,
+    [Parameter(Mandatory = $True)]    
     $Template,
     [Parameter(Mandatory = $False)]    
     [switch]$NoMail,
@@ -67,22 +69,33 @@ $name = $LastName + ", " + $FirstName
 
 ##############################################
 # If SamAccountName is taken, follow rules:  #
-#  -add 2 letters from first name            #
-#  -if still in use, use 1 letter from       #
-#  -first name, then increment # (from 1)    #
+#                                            #
+#  - use 1 letter from first name,           #
+#     then increment # (from 1)              #
 #      EXAMPLE: John Smith                   #
-# smithj, smithjo, smithj1, smithj2, smithj3 #
+# smithj, smithj1, smithj2, smithj3          #
 ##############################################
-$samaccountname = ($LastName).replace(" ", "") + $($FirstName[0])
 
-if (get-aduser -LDAPfilter "(samaccountname=$samaccountname)") {
-    $samaccountname = ($LastName).replace(" ", "") + $($FirstName.Substring(0, 2))
+if (!$Prefix) {
+    $samaccountname = (($LastName).replace(" ", "")).Substring(0, 7) + $($FirstName[0])
+    
+    $i = 1
+    while (get-aduser -LDAPfilter "(samaccountname=$samaccountname)") {
+        $samaccountname = (($LastName).replace(" ", "")).Substring(0, 6) + $($FirstName[0]) + $i
+        $i++
+    }
 }
-$i = 1
-while (get-aduser -LDAPfilter "(samaccountname=$samaccountname)") {
-    $samaccountname = ($LastName).replace(" ", "") + $($FirstName[0]) + $i
-    $i++
+
+else {
+    $samaccountname = $Prefix + (($LastName).replace(" ", "")).Substring(0, 5) + $($FirstName[0])
+    
+    $i = 1
+    while (get-aduser -LDAPfilter "(samaccountname=$samaccountname)") {
+        $samaccountname = $Prefix + (($LastName).replace(" ", "")).Substring(0, 4) + $($FirstName[0]) + $i
+        $i++
+    }
 }
+
 #########################################
 # Break if UserPrincipalName is in use  #
 #########################################
