@@ -64,8 +64,8 @@ function New-AttributesADUser {
 
 
             # Setting AD User
-            New-ADUser @params -AccountPassword (ConvertTo-SecureString "PleaseReplace123!" -AsPlainText -Force)
-            Set-ADUser -identity $User.SamAccountName -add @{proxyaddresses = $Proxies} -Enabled:$true
+            New-ADUser @params -AccountPassword (ConvertTo-SecureString "PleaseReplace123!" -AsPlainText -Force) -Enabled:([System.Convert]::ToBoolean($user.enabled))
+            Set-ADUser -identity $User.SamAccountName -add @{proxyaddresses = $Proxies}
     
             # Set Exchange attributes
             if ($user.msExchRecipientDisplayType) {
