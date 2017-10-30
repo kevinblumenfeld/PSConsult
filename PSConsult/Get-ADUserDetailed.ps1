@@ -29,6 +29,6 @@ $CalculatedProps = @(@{n = "OU" ; e = {$_.Distinguishedname | ForEach-Object {($
     @{n = "x500" ; e = {( $_.proxyAddresses | ? {$_ -match "x500:*"}).Substring(0) -join ";" }},
     @{n = "SIP" ; e = {( $_.proxyAddresses | ? {$_ -match "SIP:*"}).Substring(4) -join ";" }})   
 
-Get-ADUser -Filter 'proxyaddresses -ne "$null"' -ResultSetSize $null -Properties $Properties -searchBase (Get-ADDomain).distinguishedname -SearchScope SubTree |
+Get-ADUser -Filter * -ResultSetSize $null -Properties $Properties -searchBase (Get-ADDomain).distinguishedname -SearchScope SubTree |
     select ($Selectproperties + $CalculatedProps)
 
