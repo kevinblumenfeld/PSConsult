@@ -21,7 +21,7 @@ function New-AttributesADUser {
     Process {
         ForEach ($User in $Users) {
             $hash = @{
-                Name              = $User.SamAccountNameTarget
+                Name              = $User.SamAccountName
                 Title             = $User.Title
                 DisplayName       = $User.DisplayName
                 GivenName         = $User.GivenName
