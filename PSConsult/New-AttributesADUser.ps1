@@ -64,7 +64,7 @@ function New-AttributesADUser {
 
 
             # Setting AD User
-            New-ADUser @params
+            New-ADUser @params -AccountPassword (ConvertTo-SecureString "PleaseReplace123!" -AsPlainText -Force)
             Set-ADUser -identity $User.SamAccountName -add @{proxyaddresses = $Proxies} -Enabled:$true
     
             # Set Exchange attributes

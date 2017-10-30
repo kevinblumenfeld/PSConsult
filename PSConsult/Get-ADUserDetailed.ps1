@@ -21,7 +21,7 @@ $Selectproperties = @('DisplayName', 'Title', 'Office', 'Department', 'Division'
     'POBox', 'MobilePhone', 'OfficePhone', 'HomePhone', 'Fax', 'cn'
     'mailnickname', 'samaccountname', 'UserPrincipalName', 'Distinguishedname'
     'legacyExchangeDN', 'EmailAddress', 'msExchRecipientDisplayType'
-    'msExchRecipientTypeDetails', 'msExchRemoteRecipientType', 'targetaddress')
+    'msExchRecipientTypeDetails', 'msExchRemoteRecipientType', 'enabled', 'targetaddress')
 
 $CalculatedProps = @(@{n = "OU" ; e = {$_.Distinguishedname | ForEach-Object {($_ -split '(OU=)', 2)[1, 2] -join ''}}},
     @{n = "PrimarySMTPAddress" ; e = {( $_.proxyAddresses | ? {$_ -cmatch "SMTP:*"}).Substring(5) -join ";" }},
