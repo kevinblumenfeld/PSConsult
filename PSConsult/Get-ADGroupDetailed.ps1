@@ -1,6 +1,7 @@
 <#
     .SYNOPSIS
-    Export key attributes for any ADUSer that has data in the proxyaddresses attribute.
+    Export key attributes for any ADGroup that has data in the proxyaddresses attribute.
+    Does not contain member export/import yet.
     .EXAMPLE
     .\Get-ADGroupDetailed.ps1 | Export-Csv .\ADGroupDetailed.csv -notypeinformation -Encoding UTF8
     
