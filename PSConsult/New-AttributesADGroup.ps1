@@ -1,15 +1,12 @@
-function Set-AttributesADUser {
+function New-AttributesADUser {
     <#
 
     .SYNOPSIS
-    Set attribute for AD Users including proxy addresses.  An example is when a company acquires a firm that is already syncing with ADConnect.
-    The acquiring company will create a greenfield domain and will want to stand up AD Connect to sync to the same tenant.
-    The acquiring company may have already created (with an AD Migration) all the users in the new domain.
-    This will repopulate all the details from the source domain into the target domain.  Thus AD Connect can be reestablished.  
+    Set attribute for AD Users including proxy addresses. 
     
     .EXAMPLE
-    . .\Set-AttributesADUser.ps1
-    Import-Csv ./fromSourceDomain.csv | Set-AttributesADUser 
+    . .\New-AttributesADUser.ps1
+    Import-Csv ./test.csv | New-AttributesADUser 
 
     #>
     Param 
@@ -24,8 +21,11 @@ function Set-AttributesADUser {
     Process {
         ForEach ($User in $Users) {
             $hash = @{
-                identity          = $User.SamAccountNameTarget
+                Name              = $User.SamAccountName
                 Title             = $User.Title
+                DisplayName       = $User.DisplayName
+                GivenName         = $User.GivenName
+                Surname           = $User.Surname
                 Office            = $User.Office
                 Department        = $User.Department
                 Division          = $User.Division
@@ -53,9 +53,6 @@ function Set-AttributesADUser {
                 }
             }
 
-            # Collect Existing Primary SMTP Addresses (for Removal)
-            $Primary = (Get-ADUser -Filter "samaccountname -eq '$($user.samaccountnameTarget)'" -searchBase (Get-ADDomain).distinguishedname -SearchScope SubTree -properties proxyaddresses | Select @{n = "PrimarySMTP" ; e = {( $_.proxyAddresses | ? {$_ -cmatch "SMTP:"}).Substring(5) -join ";" }}).PrimarySMTP
-
             # Collect from CSV any SMTP Addresses (for Addition)
             $Proxies = (($User.smtp -split ";") | % {"smtp:" + $_ })
             $Proxies += ("SMTP:" + $($user.primarysmtpaddress))
@@ -66,26 +63,22 @@ function Set-AttributesADUser {
             # Collect from CSV any SIP Addresses (for Addition)
 
 
-            # Removing any existing Primary SMTP: Address(es) from the Target ADUser (to make way for 1 new Primary SMTP Address)
-            if ($primary) {
-                Set-ADUser -identity $User.SamAccountNameTarget -remove @{proxyaddresses = (($Primary -split ";") | % {"SMTP:" + $_ })}
-            }
-
             # Setting AD User
-            Set-ADUser @params -add @{proxyaddresses = $Proxies}
-            
+            New-ADUser @params -AccountPassword (ConvertTo-SecureString "PleaseReplace123!" -AsPlainText -Force) -Enabled:([System.Convert]::ToBoolean($user.enabled))
+            Set-ADUser -identity $User.SamAccountName -add @{proxyaddresses = $Proxies}
+    
             # Set Exchange attributes
             if ($user.msExchRecipientDisplayType) {
-                Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRecipientDisplayType = $user.msExchRecipientDisplayType}
+                Set-ADUser -identity $User.SamAccountName -replace @{msExchRecipientDisplayType = $user.msExchRecipientDisplayType}
             }
             if ($user.msExchRecipientTypeDetails) {
-                Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRecipientTypeDetails = $user.msExchRecipientTypeDetails}
+                Set-ADUser -identity $User.SamAccountName -replace @{msExchRecipientTypeDetails = $user.msExchRecipientTypeDetails}
             }
             if ($user.msExchRemoteRecipientType) {
-                Set-ADUser -identity $User.SamAccountNameTarget -replace @{msExchRemoteRecipientType = $user.msExchRemoteRecipientType}
+                Set-ADUser -identity $User.SamAccountName -replace @{msExchRemoteRecipientType = $user.msExchRemoteRecipientType}
             }
             if ($user.targetaddress) {
-                Set-ADUser -identity $User.SamAccountNameTarget -replace @{targetaddress = $user.targetaddress}                
+                Set-ADUser -identity $User.SamAccountName -replace @{targetaddress = $user.targetaddress}                
             }
             
         }
