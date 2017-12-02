@@ -8,6 +8,10 @@ Get-DistributionGroup "GroupPerm" | Set-DistributionGroup -GrantSendOnBehalfTo "
 
 ### Mailboxes ###
 
+# Assign on-Premises #
+Add-ADPermission TestMailbox -ExtendedRights "Send As" -User TUser
+Get-Mailbox TestMailbox | Add-ADPermission -ExtendedRights "Send As" -User TUser
+
 # Assign in Cloud #
 Get-Mailbox “Mailbox01” | Add-RecipientPermission -Trustee "Cloud01" -AccessRights SendAs
 Get-Mailbox “Mailbox01” | Add-MailboxPermission -User "Cloud01" -AccessRights FullAccess
