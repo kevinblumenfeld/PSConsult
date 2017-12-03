@@ -9,13 +9,14 @@
     #>
 
 $params = @{
-    SearchBase = (Get-ADDomain).DistinguishedName
-    Filter     = { proxyAddresses -like '*' }
-    Properties = 'Displayname',
-                 'SamAccountName',
-                 'UserPrincipalName',
-                 'ProxyAddresses',
-                 'DistinguishedName'
+    SearchBase    = (Get-ADDomain).DistinguishedName
+    ResultSetSize = $null
+    Filter        = { proxyAddresses -like '*' }
+    Properties    = 'Displayname',
+                    'SamAccountName',
+                    'UserPrincipalName',
+                    'ProxyAddresses',
+                    'DistinguishedName'
 }
 Get-ADUser @params |
     Select-Object DisplayName, SamAccountName, UserPrincipalName,
