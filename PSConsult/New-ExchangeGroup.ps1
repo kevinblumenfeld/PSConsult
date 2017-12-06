@@ -14,27 +14,28 @@ function New-ExchangeGroup {
     (
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true)]
-        $Users
+        $Groups
     )
     Begin {
         Import-Module ActiveDirectory
     }
     Process {
-        ForEach ($User in $Users) {
-            $hash = @{
-                Name               = $User.Identity
-                Alias              = $User.Alias
-                PrimarySMTPAddress = $User.PrimarySMTPAddress
+        ForEach ($Group in $Groups) {
+            $hashNew = @{
+                Name               = $Group.Name
+                DisplayName        = $Group.DisplayName                
+                SamAccountName     = $Group.SamAccountName                                
+                Alias              = $Group.mailnickname
+                PrimarySMTPAddress = $Group.PrimarySMTPAddress
             }
             $params = @{}
-            ForEach ($h in $hash.keys) {
-                if ($($hash.item($h))) {
-                    $params.add($h, $($hash.item($h)))
+            ForEach ($h in $hashNew.keys) {
+                if ($($hashNew.item($h))) {
+                    $params.add($h, $($hashNew.item($h)))
                 }
             }
             $hashSet = @{
-                Identity = $User.Identity
-
+                Description = $Group.Description
             }
             $paramsSet = @{}
             ForEach ($h in $hashSet.keys) {
@@ -42,19 +43,18 @@ function New-ExchangeGroup {
                     $paramsSet.add($h, $($hashSet.item($h)))
                 }
             }
-
             # Collect from CSV any SMTP Addresses (for Addition)
-            $Proxies = ($user.emailaddresses -split " ") -cmatch "^smtp:"
-            $Proxies = ($user.emailaddresses -split " ") -match "^x500:"
+            $Proxies = (($Group.smtp -split ";") | % {"smtp:" + $_ })
+            $Proxies += ($Group.x500 -split ";") -match "^x500:"
 
             write-host "Proxy Addresses being added:  " $Proxies
 
             # New DG and set AD User
             New-DistributionGroup @params
             if ($Proxies) {
-                write-host "ID: " $($User.Identity)
-                $filter = "(samaccountname={0})" -f $user.Identity
-                Get-ADGroup -LDAPFilter $filter | Set-ADGroup -add @{proxyaddresses = $Proxies}
+                write-host "ID: " $($Group.samaccountname)
+                $filter = "(samaccountname={0})" -f $Group.samaccountname
+                Get-ADGroup -LDAPFilter $filter | Set-ADGroup @paramsSet -add @{proxyaddresses = $Proxies}
             }
             
         }

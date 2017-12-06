@@ -16,21 +16,21 @@ function Add-GroupMembers {
     [CmdletBinding()]
     Param 
     (
-    [Parameter(Mandatory = $false,
-    ValueFromPipelinebyPropertyName = $true)]
-    $Group,
-    [Parameter(Mandatory = $false,
-    ValueFromPipelinebyPropertyName = $true)]
-    $Member
+        [Parameter(Mandatory = $false,
+            ValueFromPipelinebyPropertyName = $true)]
+        $Group,
+        [Parameter(Mandatory = $false,
+            ValueFromPipelinebyPropertyName = $true)]
+        $Member
     )
     Begin {
         Import-Module ActiveDirectory
     }
     Process {
-	Write-Host "Group: `t" $Group
-	write-Host "Member:`t" $Member
-            Add-DistributionGroupMember -Identity $Group -Members $Member
-         }
+        Write-Host "Group: `t" $Group
+        write-Host "Member:`t" $Member
+        Add-DistributionGroupMember -Identity $Group -Member $Member
+    }
     End {
 
     }
