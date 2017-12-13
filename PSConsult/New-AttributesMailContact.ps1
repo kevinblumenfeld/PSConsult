@@ -5,7 +5,7 @@ function New-AttributesMailContact {
     Set attribute for AD Users including proxy addresses. 
     
     .EXAMPLE
-    . .\New-AttributesADUser.ps1
+    . .\New-AttributesMailContact.ps1
     Import-Csv ./test.csv | New-AttributesMailContact 
 
     #>
@@ -20,10 +20,11 @@ function New-AttributesMailContact {
     }
     Process {
         ForEach ($User in $Users) {
+         
             $hash = @{
                 DisplayName                = $user.DisplayName
                 initials                   = $user.initials
-                sn                         = $user.sn
+                LastName                   = $user.sn
                 Title                      = $user.Title
                 Department                 = $user.Department
                 Division                   = $user.Division
@@ -31,28 +32,21 @@ function New-AttributesMailContact {
                 EmployeeID                 = $user.EmployeeID
                 EmployeeNumber             = $user.EmployeeNumber
                 Description                = $user.Description
-                GivenName                  = $user.GivenName
+                FirstName                  = $user.GivenName
                 StreetAddress              = $user.StreetAddress
                 PostalCode                 = $user.PostalCode
                 telephoneNumber            = $user.telephoneNumber
                 HomePhone                  = $user.HomePhone
-                mobile                     = $user.mobile
+                mobilePhone                = $user.mobile
                 pager                      = $user.pager
                 ipphone                    = $user.ipphone
-                l                          = $user.l
-                st                         = $user.st
-                cn                         = $user.cn
+                city                       = $user.l
+                StateOrProvince            = $user.st
                 physicalDeliveryOfficeName = $user.physicalDeliveryOfficeName
-                mailnickname               = $user.mailnickname
-                legacyExchangeDN           = $user.legacyExchangeDN
-                mail                       = $user.mail
-                msExchRecipientDisplayType = $user.msExchRecipientDisplayType
-                msExchRecipientTypeDetails = $user.msExchRecipientTypeDetails
-                msExchRemoteRecipientType  = $user.msExchRemoteRecipientType
-                targetaddress              = $user.targetaddress
                 info                       = $user.info
                 
             }
+
             $params = @{}
             ForEach ($h in $hash.keys) {
                 if ($($hash.item($h))) {
@@ -63,29 +57,29 @@ function New-AttributesMailContact {
 
             # Collect from CSV any SMTP Addresses (for Addition)
             $Proxies = (($User.smtp -split ";") | % {"smtp:" + $_ })
-            $Proxies += ("SMTP:" + $($user.primarysmtpaddress))
+            $Proxies += ("SMTP:" + $user.primarysmtpaddress)
 
             # Collect from CSV any x500 Addresses (for Addition)
             $Proxies += ($User.x500 -split ";")
 
             # Setting AD User
-            New-ADObject -Name $user.Name -Type Contact -PassThru | Set-Contact $_.distinguishedname @params -add @{proxyaddresses = $Proxies}
+            $Contact = New-ADObject -Name $user.Name -Type Contact -PassThru
+            # Set Exchange attributes
+            if ($user.msExchRecipientDisplayType) {
+                Set-ADObject -identity $Contact.distinguishedname -replace @{msExchRecipientDisplayType = $user.msExchRecipientDisplayType}
+            }
+            if ($user.msExchRecipientTypeDetails) {
+                Set-ADObject -identity $Contact.distinguishedname -replace @{msExchRecipientTypeDetails = $user.msExchRecipientTypeDetails}
+            }
+            if ($user.msExchRemoteRecipientType) {
+                Set-ADObject -identity $Contact.distinguishedname -replace @{msExchRemoteRecipientType = $user.msExchRemoteRecipientType}
+            }
+
+            Enable-MailContact $Contact.distinguishedname -externalemailaddress ("SMTP:" + $user.primarysmtpaddress)
+            Set-Contact $Contact.distinguishedname @params
+            Set-MailContact $Contact.distinguishedname -emailaddresses $proxies
         }
-        <#
-        # Set Exchange attributes
-        if ($user.msExchRecipientDisplayType) {
-            Set-ADUser -identity $User.SamAccountName -replace @{msExchRecipientDisplayType = $user.msExchRecipientDisplayType}
-        }
-        if ($user.msExchRecipientTypeDetails) {
-            Set-ADUser -identity $User.SamAccountName -replace @{msExchRecipientTypeDetails = $user.msExchRecipientTypeDetails}
-        }
-        if ($user.msExchRemoteRecipientType) {
-            Set-ADUser -identity $User.SamAccountName -replace @{msExchRemoteRecipientType = $user.msExchRemoteRecipientType}
-        }
-        if ($user.targetaddress) {
-            Set-ADUser -identity $User.SamAccountName -replace @{targetaddress = $user.targetaddress}                
-        }
-            #>
+
     }
 
     End {
