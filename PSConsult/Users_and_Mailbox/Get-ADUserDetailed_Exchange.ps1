@@ -1,25 +1,27 @@
 <#
     .SYNOPSIS
-    Export key attributes for any ADUSer that has data in the proxyaddresses attribute.
+    Export key attributes for any ADUSer that has data in the proxyaddresses attribute. Exchange schema needs to be extended.
 
     .EXAMPLE
-    .\Get-ADUserDetailed.ps1 | Export-Csv .\ADUsersDetailed.csv -notypeinformation -Encoding UTF8
+    .\Get-ADUserDetailed_Exchange.ps1 | Export-Csv .\ADUsersDetailed.csv -notypeinformation -Encoding UTF8
     
     #>
 
-    $properties = @('DisplayName', 'Title', 'Office', 'Department', 'Division'
+$properties = @('DisplayName', 'Title', 'Office', 'Department', 'Division'
     'Company', 'Organization', 'EmployeeID', 'EmployeeNumber', 'Description', 'GivenName'
     'Surname', 'StreetAddress', 'City', 'State', 'PostalCode', 'Country', 'countryCode'
     'POBox', 'MobilePhone', 'OfficePhone', 'HomePhone', 'Fax', 'cn'
-    'samaccountname', 'UserPrincipalName', 'proxyAddresses'
-    'Distinguishedname', 'legacyExchangeDN', 'EmailAddress')
+    'mailnickname', 'samaccountname', 'UserPrincipalName', 'proxyAddresses'
+    'Distinguishedname', 'legacyExchangeDN', 'EmailAddress', 'msExchRecipientDisplayType'
+    'msExchRecipientTypeDetails', 'msExchRemoteRecipientType', 'targetaddress')
 
 $Selectproperties = @('DisplayName', 'Title', 'Office', 'Department', 'Division'
     'Company', 'Organization', 'EmployeeID', 'EmployeeNumber', 'Description', 'GivenName'
     'Surname', 'StreetAddress', 'City', 'State', 'PostalCode', 'Country', 'countryCode'
     'POBox', 'MobilePhone', 'OfficePhone', 'HomePhone', 'Fax', 'cn'
-    'samaccountname', 'UserPrincipalName', 'Distinguishedname'
-    'legacyExchangeDN', 'enabled', 'EmailAddress')
+    'mailnickname', 'samaccountname', 'UserPrincipalName', 'Distinguishedname'
+    'legacyExchangeDN', 'msExchRecipientDisplayType'
+    'msExchRecipientTypeDetails', 'msExchRemoteRecipientType', 'enabled', 'targetaddress', 'EmailAddress')
 
 $CalculatedProps = @(@{n = "PrimarySMTPAddress" ; e = {( $_.proxyAddresses | ? {$_ -cmatch "SMTP:*"}).Substring(5) -join ";" }},
     @{n = "OU" ; e = {$_.Distinguishedname | ForEach-Object {($_ -split '(OU=)', 2)[1, 2] -join ''}}},
