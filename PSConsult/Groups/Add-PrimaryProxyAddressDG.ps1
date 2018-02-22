@@ -10,7 +10,7 @@ function Add-PrimaryProxyAddressDG {
     Group03, Joe@contoso.com
 
     .EXAMPLE
-    . .\Add-ADDGPrimaryProxyAddress.ps1
+    . .\Add-PrimaryProxyAddressDG.ps1
     Import-Csv .\Users.csv | Add-PrimaryProxyAddressDG -Path "OU=Users,OU=Mail,OU=Internal,OU=contoso-Users,DC=contoso,DC=com"
 
     #>

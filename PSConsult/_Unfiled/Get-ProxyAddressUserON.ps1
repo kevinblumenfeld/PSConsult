@@ -16,4 +16,4 @@ Get-ADUser -Filter 'proxyaddresses -ne "$null"' -ResultSetSize $null -Properties
 @{n = "PrimarySMTPAddress" ; e = {( $_.proxyAddresses | ? {$_ -cmatch "SMTP:*"}).Substring(5) -join ";" }},
 @{n = "smtp" ; e = {( $_.proxyAddresses | ? {$_ -cmatch "smtp:*"}).Substring(5) -join ";" }},
 @{n = "x500" ; e = {( $_.proxyAddresses | ? {$_ -match "x500:*"}).Substring(0) -join ";" }},
-@{n = "ONmicrosoft" ; e = {( $_.proxyAddresses | ? {$_ -match "*riobelcanada.mail.onmicrosoft.com*"}).Substring(5) -join ";" }}
+@{n = "ONmicrosoft" ; e = {( $_.proxyAddresses | ? {$_ -match "*contosocanada.mail.onmicrosoft.com*"}).Substring(5) -join ";" }}

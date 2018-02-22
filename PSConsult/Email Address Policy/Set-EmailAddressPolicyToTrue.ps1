@@ -22,7 +22,7 @@ function Set-MailNickNameUPNSuffix {
                     $_.distinguishedname -like "OU=Users*" -or 
                     ($_.distinguishedname -notlike "*privileged*" -and 
                         $_.distinguishedname -notlike "*adonly*") -and
-                    $_.distinguishedname -like "*DC=riobel,DC=fbgpg,DC=com"
+                    $_.distinguishedname -like "*DC=contoso,DC=corp,DC=com"
                 }).DistinguishedName
             foreach ($OU in $OUs) {
                 Get-RemoteMailbox  -OnPremisesOrganizationalUnit $OU -ResultSize 4 | % {

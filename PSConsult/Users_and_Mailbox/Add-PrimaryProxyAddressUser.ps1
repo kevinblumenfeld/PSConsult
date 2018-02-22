@@ -1,4 +1,4 @@
-function Add-ADUSERPrimaryProxyAddress {
+function Add-PrimaryProxyAddressUser {
     <#
 
     .SYNOPSIS
@@ -10,8 +10,8 @@ function Add-ADUSERPrimaryProxyAddress {
     Group03, Joe@contoso.com
 
     .EXAMPLE
-    . .\Add-ADUSERPrimaryProxyAddress.ps1
-    Import-Csv .\Users.csv | Add-ADUSERPrimaryProxyAddress -Path "OU=Users,OU=Mail,OU=Internal,OU=contoso-Users,DC=contoso,DC=com"
+    . .\Add-PrimaryProxyAddressUser.ps1
+    Import-Csv .\Users.csv | Add-PrimaryProxyAddressUser -Path "OU=Users,OU=Mail,OU=Internal,OU=contoso-Users,DC=contoso,DC=com"
 
     #>
     [CmdletBinding()]

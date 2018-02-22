@@ -65,7 +65,7 @@ function New-AttributesADUser2 {
 
             $SamAccountName = (($User.primarysmtpaddress) -split "@")[0]
             # Setting AD User
-            New-ADUser @params -SamAccountName $SamAccountName -AccountPassword (ConvertTo-SecureString "PleaseReplace123!" -AsPlainText -Force) -Enabled:$False -Path "OU=SharedMailboxes,OU=Mail,OU=Internal,OU=NRCUS-Users,DC=nrch,DC=us"
+            New-ADUser @params -SamAccountName $SamAccountName -AccountPassword (ConvertTo-SecureString "ContosoPassword123!!" -AsPlainText -Force) -Enabled:$False -Path "OU=SharedMailboxes,OU=Mail,OU=Internal,OU=contosoUS-Users,DC=contosoh,DC=us"
             Set-ADUser -identity $SamAccountName -add @{proxyaddresses = $Proxies}
     
             # Set Exchange attributes
