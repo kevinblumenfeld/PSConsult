@@ -1,4 +1,4 @@
-function New-AttributesADUser {
+function New-AttributesADUser2 {
     <#
 
     .SYNOPSIS
@@ -21,7 +21,7 @@ function New-AttributesADUser {
     Process {
         ForEach ($User in $Users) {
             $hash = @{
-                Name              = $User.SamAccountName
+                Name              = $User.DisplayName
                 Title             = $User.Title
                 DisplayName       = $User.DisplayName
                 GivenName         = $User.GivenName
@@ -44,7 +44,8 @@ function New-AttributesADUser {
                 OfficePhone       = $User.OfficePhone
                 HomePhone         = $User.HomePhone
                 Fax               = $User.Fax
-                UserPrincipalName = $User.UserPrincipalName
+                UserPrincipalName = $User.primarysmtpaddress
+                EmailAddress      = $User.primarysmtpaddress
             }
             $params = @{}
             ForEach ($h in $hash.keys) {
@@ -54,18 +55,18 @@ function New-AttributesADUser {
             }
 
             # Collect from CSV any SMTP Addresses (for Addition)
-            $Proxies = (($User.smtp -split ";") | % {"smtp:" + $_ })
+            # $Proxies = (($User.smtp -split ";") | % {"smtp:" + $_ })
             $Proxies += ("SMTP:" + $($user.primarysmtpaddress))
 
             # Collect from CSV any x500 Addresses (for Addition)
-            $Proxies += ($User.x500 -split ";")
+            # $Proxies += ($User.x500 -split ";")
 
             # Collect from CSV any SIP Addresses (for Addition)
 
-
+            $SamAccountName = (($User.primarysmtpaddress) -split "@")[0]
             # Setting AD User
-            New-ADUser @params -AccountPassword (ConvertTo-SecureString "PleaseReplace123!" -AsPlainText -Force) -Enabled:([System.Convert]::ToBoolean($user.enabled))
-            Set-ADUser -identity $User.SamAccountName -add @{proxyaddresses = $Proxies}
+            New-ADUser @params -SamAccountName $SamAccountName -AccountPassword (ConvertTo-SecureString "PleaseReplace123!" -AsPlainText -Force) -Enabled:$False -Path "OU=SharedMailboxes,OU=Mail,OU=Internal,OU=NRCUS-Users,DC=nrch,DC=us"
+            Set-ADUser -identity $SamAccountName -add @{proxyaddresses = $Proxies}
     
             # Set Exchange attributes
             if ($user.msExchRecipientDisplayType) {
