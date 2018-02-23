@@ -3,7 +3,7 @@
     Export key attributes for any ADGroup that has data in the proxyaddresses attribute.
     Does not contain member export/import yet.
     .EXAMPLE
-    .\Get-ADGroupDetailed.ps1 | Export-Csv .\ADGroupDetailed.csv -notypeinformation -Encoding UTF8
+    .\Get-ADGroupDetailedExchange.ps1 | Export-Csv .\ADGroupDetailedExchange.csv -notypeinformation -Encoding UTF8
     
     #>
 
