@@ -62,7 +62,7 @@ function Add-IPtoAllowList {
                 Write-Verbose "Connection Filter Policy `"$ConnectionFilterPolicy`" has been created."
             }
             Catch {
-                Error[0]
+                $_
                 Write-Verbose "Unable to Create Connection Filter Policy"
                 Break
             }
