@@ -7,12 +7,13 @@ function Add-IPtoAllowList {
 		Adds a list of IP Addresses to a Hosted Connection Filter Policy.  If the policy does not exist it creates it.
 	
 	.PARAMETER IPs
-		The IP addresses to be added to the Allow List of a Hosted Connection Filter Policy .
+		The IP addresses to be added to the Allow List of a Hosted Connection Filter Policy.
+        
         You enter the IP addresses using the following syntax:
 
-        Single IP   For example, 192.168.1.1.
-        IP range   You can use an IP address range, for example, 192.168.0.1-192.168.0.254.
-        CIDR IP   You can use Classless InterDomain Routing (CIDR), for example, 192.168.0.1/25.
+        Single IP   For example, 192.168.1.1
+        IP range   You can use an IP address range, for example, 192.168.0.1-192.168.0.254
+        CIDR IP   You can use Classless InterDomain Routing (CIDR), for example, 192.168.0.1/25
 	
 	.PARAMETER ConnectionFilterPolicy
 		Name of the Connection Filter Policy to use.  If Connection Filter Policy does not exist it will be created.
