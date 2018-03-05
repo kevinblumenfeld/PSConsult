@@ -48,8 +48,8 @@ function Add-IPtoAllowList {
         $OutputPath = "."
     )
     begin {
-        $headerstring = ("IP")
-        $errheaderstring = ("IP" + "," + "Error")
+        $headerstring = ("Policy" + "," + "IP")
+        $errheaderstring = ("Policy" + "," + "IP" + "," + "Error")
 		
         $successPath = Join-Path $OutputPath "Success.csv"
         $failedPath = Join-Path $OutputPath "Failed.csv"
@@ -76,11 +76,11 @@ function Add-IPtoAllowList {
             try {
                 Set-HostedConnectionFilterPolicy -Identity $ConnectionFilterPolicy -IPAllowList @{add = $IP}
                 Write-Verbose "IP Address added: `t $IP" 
-                $IP | Out-file $successPath -Encoding UTF8 -append
+                $ConnectionFilterPolicy + "," + $IP | Out-file $successPath -Encoding UTF8 -append
             }
             catch {
                 Write-Warning $_
-                $IP + "," + $_ | Out-file $failedPath -Encoding UTF8 -append
+                $ConnectionFilterPolicy + "," + $IP + "," + $_ | Out-file $failedPath -Encoding UTF8 -append
             }
         }
     }
