@@ -64,7 +64,7 @@ function Add-IPtoAllowList {
             Catch {
                 $_
                 Write-Verbose "Unable to Create Connection Filter Policy"
-                Break
+                Throw
             }
         }
         else { 
