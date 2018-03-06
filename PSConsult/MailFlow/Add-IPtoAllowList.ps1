@@ -58,7 +58,7 @@ function Add-IPtoAllowList {
 		
         if (!(Get-HostedConnectionFilterPolicy -Identity $ConnectionFilterPolicy -ErrorAction SilentlyContinue)) {
             Try {
-                New-HostedConnectionFilterPolicy -name $ConnectionFilterPolicy
+                New-HostedConnectionFilterPolicy -name $ConnectionFilterPolicy -ErrorAction Stop
                 Write-Verbose "Connection Filter Policy `"$ConnectionFilterPolicy`" has been created."
             }
             Catch {
