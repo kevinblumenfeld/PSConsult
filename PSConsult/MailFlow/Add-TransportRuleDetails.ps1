@@ -103,7 +103,7 @@ function Add-TransportRuleDetails {
     )
     begin {
         $Params = @{}
-        $listAddressWords = $setAddressWords = New-Object System.Collections.Generic.List[System.Object]
+        $listAddressWords = New-Object System.Collections.Generic.List[System.Object]
         $headerstring = ("TransportRule" + "," + "Details")
         $errheaderstring = ("TransportRule" + "," + "Details" + "," + "Error")
 		
