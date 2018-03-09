@@ -2,14 +2,14 @@ function Add-TransportRuleDetails {
     <#
     .SYNOPSIS
         Adds details to Transport Rule.  If the transport rule does not exist it creates it.
-	
-	.DESCRIPTION
+
+    .DESCRIPTION
         Adds details to Transport Rule.  If the transport rule does not exist it creates it.
 
-	.PARAMETER TransportRule
+    .PARAMETER TransportRule
         Name of the Transport Rule to use.  If Transport Rule does not exist it will be created.
-		
-	.PARAMETER RecipientAddressContainsWords
+
+    .PARAMETER RecipientAddressContainsWords
         This parameter specifies a condition or part of a condition for the rule. The name of the corresponding exception parameter starts with ExceptIf.
 
         In on-premises Exchange, this condition is only available on Mailbox servers.
