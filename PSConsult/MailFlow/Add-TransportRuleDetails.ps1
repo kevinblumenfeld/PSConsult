@@ -50,7 +50,7 @@ function Add-TransportRuleDetails {
                 
         Example of RuleDetails.csv
 
-        AddressWords, Words
+        AddressWords, SubjectWords
         fred@contoso.com, moon 
         jane@fabrikam.com, sun fire
         potato.com, ocean
@@ -74,7 +74,7 @@ function Add-TransportRuleDetails {
         
         [Parameter(ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [Alias('SubjectBodyWords')]
-        [Alias('Words')]
+        [Alias('SBWords')]
         [string[]]
         $SubjectOrBodyContainsWords,
         
@@ -103,7 +103,7 @@ function Add-TransportRuleDetails {
     )
     begin {
         $Params = @{}
-        $setAddressWords = [System.Collections.Generic.HashSet[string]]::new()
+        $setAddressWords = New-Object System.Collections.Generic.List[System.Object]
         $headerstring = ("TransportRule" + "," + "IP")
         $errheaderstring = ("TransportRule" + "," + "IP" + "," + "Error")
 		
@@ -115,7 +115,10 @@ function Add-TransportRuleDetails {
     }
     process {
         if ($RecipientAddressContainsWords) {
-            $setAddressWords.add($RecipientAddressContainsWords)
+                $setAddressWords.add($RecipientAddressContainsWords.words)
+                Write-Host $setAddressWords
+                Write-Host $($RecipientAddressContainsWords.words)
+                Write-Host $RecipientAddressContainsWords
         }
         if ($ExceptIfRecipientAddressContainsWords) {
 
@@ -138,6 +141,7 @@ function Add-TransportRuleDetails {
             $Params.Add("DeleteMessage", $true)
         }
         if ($AddAddressWords) {
+            write-host $setAddressWords
             $Params.Add("RecipientAddressContainsWords", $setAddressWords)
         }
         if (!(Get-TransportRule -Identity $TransportRule -ErrorAction SilentlyContinue)) {
