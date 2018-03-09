@@ -138,7 +138,7 @@ function Add-TransportRuleDetails {
         if ($Action01 -eq "DeleteMessage") {
             $Params.Add("DeleteMessage", $true)
         }
-        if ($AddAddressWords) {
+        if ($RecipientAddressContainsWords) {
             $Params.Add("RecipientAddressContainsWords", $listAddressWords)
         }
         if (!(Get-TransportRule -Identity $TransportRule -ErrorAction SilentlyContinue)) {
@@ -166,3 +166,4 @@ function Add-TransportRuleDetails {
         }
     }
 }
+# Import-Csv c:\scripts\words.csv | Add-TransportRuleDetails -TransportRule "000" -Action01 DeleteMessage
