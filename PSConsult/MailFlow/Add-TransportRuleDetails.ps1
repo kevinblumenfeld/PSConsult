@@ -104,8 +104,8 @@ function Add-TransportRuleDetails {
     begin {
         $Params = @{}
         $listAddressWords = $setAddressWords = New-Object System.Collections.Generic.List[System.Object]
-        $headerstring = ("TransportRule" + "," + "IP")
-        $errheaderstring = ("TransportRule" + "," + "IP" + "," + "Error")
+        $headerstring = ("TransportRule" + "," + "Details")
+        $errheaderstring = ("TransportRule" + "," + "Details" + "," + "Error")
 		
         $successPath = Join-Path $OutputPath "Success.csv"
         $failedPath = Join-Path $OutputPath "Failed.csv"
