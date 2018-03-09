@@ -3,11 +3,12 @@ function Add-SecondaryProxyAddressUser {
 
     .SYNOPSIS
     Add member(s) to a group(s) from a CSV that look like this
-    DisplayName,PrimarySMTPAddress,SecondarySMTPAddress
-    Joe,Joe@contoso.com,Joe2@contoso.com
-    Sally,Sally@contoso.com,Sally2@contoso.com
-    Fred,Fred@contoso.com,Fred3@contoso.com
-    Joel,Joel@contoso.com,Joel2@contoso.com
+
+    DisplayName, PrimarySMTPAddress, SecondarySMTPAddress
+    Joe, Joe@contoso.com, Joe2@contoso.com
+    Sally, Sally@contoso.com, Sally2@contoso.com
+    Fred, Fred@contoso.com, Fred3@contoso.com
+    Joel, Joel@contoso.com, Joel2@contoso.com
 
     .EXAMPLE
     . .\Add-SecondaryProxyAddressUser.ps1
@@ -17,14 +18,11 @@ function Add-SecondaryProxyAddressUser {
     [CmdletBinding()]
     Param 
     (
-        [Parameter(Mandatory = $false,
-            ValueFromPipelinebyPropertyName = $true)]
+        [Parameter(Mandatory = $false, ValueFromPipelinebyPropertyName = $true)]
         $primarySMTPAddress,
-        [Parameter(Mandatory = $false,
-            ValueFromPipelinebyPropertyName = $true)]
+        [Parameter(Mandatory = $false, ValueFromPipelinebyPropertyName = $true)]
         $SecondarySMTPAddress,
-        [Parameter(Mandatory = $false,
-            ValueFromPipelinebyPropertyName = $true)]
+        [Parameter(Mandatory = $false, ValueFromPipelinebyPropertyName = $true)]
         $DisplayName,
         [Parameter(Mandatory = $true)]
         $Path
