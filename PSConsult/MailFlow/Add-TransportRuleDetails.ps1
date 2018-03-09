@@ -1,12 +1,11 @@
 function Add-TransportRuleDetails {
     <#
-	.SYNOPSIS
+    .SYNOPSIS
         Adds details to Transport Rule.  If the transport rule does not exist it creates it.
 	
 	.DESCRIPTION
         Adds details to Transport Rule.  If the transport rule does not exist it creates it.
 
-    
 	.PARAMETER TransportRule
         Name of the Transport Rule to use.  If Transport Rule does not exist it will be created.
 		
@@ -49,9 +48,9 @@ function Add-TransportRuleDetails {
 
         The SenderIpRanges parameter specifies a condition that looks for senders whose IP addresses matches the specified value, or fall within the specified ranges. Valid values are:
 
-          Single IP address   For example, 192.168.1.1.
-          IP address range   For example, 192.168.0.1-192.168.0.254.
-          Classless InterDomain Routing (CIDR) IP address range   For example, 192.168.0.1/25.
+            Single IP address   For example, 192.168.1.1.
+            IP address range   For example, 192.168.0.1-192.168.0.254.
+            Classless InterDomain Routing (CIDR) IP address range   For example, 192.168.0.1/25.
 
         You can specify multiple IP addresses or ranges separated by commas.
 
