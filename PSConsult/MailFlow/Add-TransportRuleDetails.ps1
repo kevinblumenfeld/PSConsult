@@ -195,6 +195,9 @@ function Add-TransportRuleDetails {
             $Params.Add("RecipientAddressContainsWords", $listAddressWords)
         }
         if ($listSenderIPRanges) {
+            if ((Get-TransportRule | select -Last 1).senderipranges) {
+                (Get-TransportRule | select -Last 1).senderipranges | ForEach-Object {$listSenderIPRanges.Add($_)}
+            }
             $Params.Add("SenderIPRanges", $listSenderIPRanges)
         }
         if (!(Get-TransportRule -Identity $TransportRule -ErrorAction SilentlyContinue)) {
