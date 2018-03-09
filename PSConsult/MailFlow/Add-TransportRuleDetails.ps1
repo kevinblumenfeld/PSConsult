@@ -94,15 +94,16 @@ function Add-TransportRuleDetails {
         [string[]]
         $AttachmentMatchesPatterns,
         
-        [Parameter(ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
-        [Alias('names')]
-        [string[]]
-        $List,
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("DeleteMessage", "NotifyRecipients")]
+        $Action01,
 
         [string]
         $OutputPath = "."
     )
     begin {
+        $Params = @{}
+        $setAddressWords = [System.Collections.Generic.HashSet[string]]::new()
         $headerstring = ("TransportRule" + "," + "IP")
         $errheaderstring = ("TransportRule" + "," + "IP" + "," + "Error")
 		
@@ -111,26 +112,10 @@ function Add-TransportRuleDetails {
         Out-File -FilePath $successPath -InputObject $headerstring -Encoding UTF8 -append
         Out-File -FilePath $failedPath -InputObject $errheaderstring -Encoding UTF8 -append
 		
-        if (!(Get-TransportRule -Identity $TransportRule -ErrorAction SilentlyContinue)) {
-            Try {
-                New-TransportRule -name $TransportRule -ErrorAction Stop
-                Write-Verbose "Transport Rule `"$TransportRule`" has been created."
-            }
-            Catch {
-                $_
-                Write-Verbose "Unable to Create Transport Rule"
-                Throw
-            }
-        }
-        else { 
-            Write-Verbose "Transport Rule `"$TransportRule`" already exists."
-        }
     }
     process {
         if ($RecipientAddressContainsWords) {
-            Foreach ($RecipientAddressContainsWord in $RecipientAddressContainsWords) {
-                $AddAddressWords += $RecipientAddressContainsWord
-            }
+            $setAddressWords.add($RecipientAddressContainsWords)
         }
         if ($ExceptIfRecipientAddressContainsWords) {
 
@@ -149,15 +134,34 @@ function Add-TransportRuleDetails {
         }
     }
     end {
-        try {
-            Set-TransportRule -RecipientAddressContainsWords $AddAddressWords
-            Write-Verbose "IP Address added: `t $AddAddressWords" 
-            $TransportRule + "," + $AddAddressWords | Out-file $successPath -Encoding UTF8 -append
+        if ($Action01 -eq "DeleteMessage") {
+            $Params.Add("DeleteMessage", $true)
         }
-        catch {
-            Write-Warning $_
-            $TransportRule + "," + $AddAddressWords + "," + $_ | Out-file $failedPath -Encoding UTF8 -append
+        if ($AddAddressWords) {
+            $Params.Add("RecipientAddressContainsWords", $setAddressWords)
         }
-		
+        if (!(Get-TransportRule -Identity $TransportRule -ErrorAction SilentlyContinue)) {
+            Try {
+                New-TransportRule -Name $TransportRule @Params -ErrorAction Stop
+                Write-Verbose "Transport Rule `"$TransportRule`" has been created."
+            }
+            Catch {
+                $_
+                Write-Verbose "Unable to Create Transport Rule"
+                Throw
+            }
+        }
+        else { 
+            Write-Verbose "Transport Rule `"$TransportRule`" already exists."
+            try {
+                Set-TransportRule -Identity $TransportRule @Params
+                Write-Verbose "Parameters: `t $Params" 
+                $TransportRule + "," + $Params | Out-file $successPath -Encoding UTF8 -append
+            }
+            catch {
+                Write-Warning $_
+                $TransportRule + "," + $Params + "," + $_ | Out-file $failedPath -Encoding UTF8 -append
+            }
+        }
     }
 }
