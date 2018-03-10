@@ -42,8 +42,12 @@ function Add-ContentFilterPolicyDetail {
         fabrikam.com, fred@contoso.com, harry@contoso.com, evil.com
         google.com, john@contoso.com, bad@contoso.com, bad.com
         wingtip.com, jane@contoso.com, pla@contosa.com, worse.com
+
     .EXAMPLE
         Import-Csv .\PolicyDetail.csv | Add-ContentFilterPolicyDetail -ContentFilterPolicy "Bypass Spam Filtering for New York Partners"
+
+    .EXAMPLE
+        Import-Csv .\PolicyDetail.csv | Add-ContentFilterPolicyDetail -ContentFilterPolicy "Default"
 
 #>
     [CmdletBinding()]
