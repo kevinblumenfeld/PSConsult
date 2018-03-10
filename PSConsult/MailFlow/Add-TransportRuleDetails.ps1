@@ -248,11 +248,11 @@ function Add-TransportRuleDetails {
             try {
                 Set-TransportRule -Identity $TransportRule @Params -ErrorAction Stop
                 Write-Verbose "Parameters: `t $Params" 
-                $TransportRule + "," + $($Params.values) | Out-file $successPath -Encoding UTF8 -append
+                $TransportRule + "," + ($Params.values | % { $_ -join " "}) | Out-file $successPath -Encoding UTF8 -append
             }
             catch {
                 Write-Warning $_
-                $TransportRule + "," + $($Params.values) + "," + $_ | Out-file $failedPath -Encoding UTF8 -append
+                $TransportRule + "," + ($Params.values | % { $_ -join " "}) + "," + $_ | Out-file $failedPath -Encoding UTF8 -append
             }
         }
     }
