@@ -83,11 +83,8 @@ function Add-ContentFilterPolicyDetail {
         $Params = @{}
         $listAllowedSenderDomains = New-Object System.Collections.Generic.HashSet[String]
         $listAllowedSenders = New-Object System.Collections.Generic.HashSet[String]
-        $BlockedSenderDomains = New-Object System.Collections.Generic.HashSet[String]
-        $listExceptSBWords = New-Object System.Collections.Generic.HashSet[String]
-        $listAttachmentWords = New-Object System.Collections.Generic.HashSet[String]
-        $listAttachmentPattern = New-Object System.Collections.Generic.HashSet[String]
-        $listSenderIPRanges = New-Object System.Collections.Generic.HashSet[String]
+        $listBlockedSenderDomains = New-Object System.Collections.Generic.HashSet[String]
+        $listBlockedSenders = New-Object System.Collections.Generic.HashSet[String]
 
         $headerstring = ("ContentFilterPolicy" + "," + "Detail")
         $errheaderstring = ("ContentFilterPolicy" + "," + "Detail" + "," + "Error")
@@ -99,70 +96,43 @@ function Add-ContentFilterPolicyDetail {
 		
     }
     process {
-        if ($RecipientAddressContainsWords) {
-            [void]$listAllowedSenderDomains.add($RecipientAddressContainsWords)
+        if ($AllowedSenderDomains) {
+            [void]$listAllowedSenderDomains.add($AllowedSenderDomains)
         }
-        if ($ExceptIfRecipientAddressContainsWords) {
-            [void]$listAllowedSenders.add($ExceptIfRecipientAddressContainsWords)
+        if ($AllowedSenders) {
+            [void]$listAllowedSenders.add($AllowedSenders)
         }
-        if ($SubjectOrBodyContainsWords) {
-            [void]$BlockedSenderDomains.add($SubjectOrBodyContainsWords)
+        if ($BlockedSenderDomains) {
+            [void]$listBlockedSenderDomains.add($BlockedSenderDomains)
         }
-        if ($ExceptIfSubjectOrBodyContainsWords) {
-            [void]$listExceptSBWords.add($ExceptIfSubjectOrBodyContainsWords)
-        }
-        if ($AttachmentContainsWords) {
-            [void]$listAttachmentWords.add($AttachmentContainsWords)
-        }
-        if ($AttachmentMatchesPatterns) {
-            [void]$listAttachmentPattern.add($AttachmentMatchesPatterns)
-        }        
-        if ($SenderIPRanges) {
-            [void]$listSenderIPRanges.add($SenderIPRanges)
+        if ($BlockedSenders) {
+            [void]$listBlockedSenders.add($BlockedSenders)
         }
     }
     end {
         if ($listAllowedSenderDomains.count -gt "0") {
-            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).RecipientAddressContainsWords) {
-                (Get-HostedContentFilterPolicy $ContentFilterPolicy).RecipientAddressContainsWords | ForEach-Object {[void]$listAllowedSenderDomains.Add($_)}
+            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).AllowedSenderDomains) {
+                (Get-HostedContentFilterPolicy $ContentFilterPolicy).AllowedSenderDomains | ForEach-Object {[void]$listAllowedSenderDomains.Add($_)}
             }
-            $Params.Add("RecipientAddressContainsWords", $listAllowedSenderDomains)
+            $Params.Add("AllowedSenderDomains", $listAllowedSenderDomains)
         }
         if ($listAllowedSenders.count -gt "0") {
-            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).ExceptIfRecipientAddressContainsWords) {
-                (Get-HostedContentFilterPolicy $ContentFilterPolicy).ExceptIfRecipientAddressContainsWords | ForEach-Object {[void]$listAllowedSenders.Add($_)}
+            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).AllowedSenders) {
+                (Get-HostedContentFilterPolicy $ContentFilterPolicy).AllowedSenders | ForEach-Object {[void]$listAllowedSenders.Add($_)}
             }
-            $Params.Add("ExceptIfRecipientAddressContainsWords", $listAllowedSenders)
+            $Params.Add("AllowedSenders", $listAllowedSenders)
         }
-        if ($listAllowedSenders.count -gt "0") {
-            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).SubjectOrBodyContainsWords) {
-                (Get-HostedContentFilterPolicy $ContentFilterPolicy).SubjectOrBodyContainsWords | ForEach-Object {[void]$listAllowedSenders.Add($_)}
+        if ($listBlockedSenderDomains.count -gt "0") {
+            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).BlockedSenderDomains) {
+                (Get-HostedContentFilterPolicy $ContentFilterPolicy).BlockedSenderDomains | ForEach-Object {[void]$listBlockedSenderDomains.Add($_)}
             }
-            $Params.Add("SubjectOrBodyContainsWords", $BlockedSenderDomains)
+            $Params.Add("BlockedSenderDomains", $listBlockedSenderDomains)
         }
-        if ($listExceptSBWords.count -gt "0") {
-            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).ExceptIfSubjectOrBodyContainsWords) {
-                (Get-HostedContentFilterPolicy $ContentFilterPolicy).ExceptIfSubjectOrBodyContainsWords | ForEach-Object {[void]$listExceptSBWords.Add($_)}
+        if ($listBlockedSenders.count -gt "0") {
+            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).BlockedSenders) {
+                (Get-HostedContentFilterPolicy $ContentFilterPolicy).BlockedSenders | ForEach-Object {[void]$listBlockedSenders.Add($_)}
             }
-            $Params.Add("ExceptIfSubjectOrBodyContainsWords", $listExceptSBWords)
-        }
-        if ($listAttachmentWords.count -gt "0") {
-            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).AttachmentContainsWords) {
-                (Get-HostedContentFilterPolicy $ContentFilterPolicy).AttachmentContainsWords | ForEach-Object {[void]$listAttachmentWords.Add($_)}
-            }
-            $Params.Add("AttachmentContainsWords", $listAttachmentWords)
-        }
-        if ($listAttachmentPattern.count -gt "0") {
-            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).AttachmentMatchesPatterns) {
-                (Get-HostedContentFilterPolicy $ContentFilterPolicy).AttachmentMatchesPatterns | ForEach-Object {[void]$listAttachmentPattern.Add($_)}
-            }
-            $Params.Add("AttachmentMatchesPatterns", $listAttachmentPattern)
-        }
-        if ($listSenderIPRanges.count -gt "0") {
-            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).senderipranges) {
-                (Get-HostedContentFilterPolicy $ContentFilterPolicy).senderipranges | ForEach-Object {[void]$listSenderIPRanges.Add($_)}
-            }
-            $Params.Add("SenderIPRanges", $listSenderIPRanges)
+            $Params.Add("BlockedSenders", $listBlockedSenders)
         }
         if ($Action01 -eq "DeleteMessage") {
             $Params.Add("DeleteMessage", $true)
