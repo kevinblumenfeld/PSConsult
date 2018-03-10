@@ -257,3 +257,4 @@ function Add-TransportRuleDetails {
         }
     }
 }
+Import-Csv c:\scripts\words.csv | Add-TransportRuleDetails -TransportRule "MultipleColumns3" -Action01 BypassSpamFiltering -Verbose
