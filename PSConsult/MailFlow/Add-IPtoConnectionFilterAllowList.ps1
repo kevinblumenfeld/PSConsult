@@ -1,4 +1,4 @@
-function Add-IPtoAllowList {
+function Add-IPtoConnectionFilterAllowList {
     <#
 	.SYNOPSIS
         Adds a list of IP Addresses to a Hosted Connection Filter Policy.  If the policy does not exist it creates it.
@@ -23,7 +23,7 @@ function Add-IPtoAllowList {
         By default it will write to the current path.
 
 	.EXAMPLE
-        Import-Csv .\IP.csv | Add-IPtoAllowList -ConnectionFilterPolicy "IP Addresses of Partners"
+        Import-Csv .\IP.csv | Add-IPtoConnectionFilterAllowList -ConnectionFilterPolicy "IP Addresses of Partners"
                 
         Example of IP.csv
 
