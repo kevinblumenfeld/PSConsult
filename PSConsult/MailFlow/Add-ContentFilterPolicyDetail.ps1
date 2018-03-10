@@ -36,14 +36,14 @@ function Add-ContentFilterPolicyDetail {
     .EXAMPLE
         Import-Csv .\PolicyDetail.csv | Add-ContentFilterPolicyDetail -ContentFilterPolicy "Spam Filter Policy for contoso.com recipients"
 
-        Example of Policy Detail.csv
+        Example of PolicyDetail.csv
 
-        AllowedSenderDomains, SubjectBodyWords, ExceptSubjectBodyWords, SenderIPs 
-        fred@contoso.com, moon, wind, 142.23.221.21
-        jane@fabrikam.com, sun fire, rain, 142.23.220.1-142.23.220.254
-        potato.com, ocean, snow, 72.14.52.0/24
+        AllowedSenderDomains, AllowedSenders, BlockedSenders, BlockedSenderDomains 
+        fabrikam.com, fred@contoso.com, harry@contoso.com, evil.com
+        google.com, john@contoso.com, bad@contoso.com, bad.com
+        wingtip.com, jane@contoso.com, pla@contosa.com, worse.com
     .EXAMPLE
-        Import-Csv .\PolicyDetail.csv | Add-ContentFilterPolicyDetail -ContentFilterPolicy "Bypass Spam Filtering for New York Partners" -Action01 BypassSpamFiltering
+        Import-Csv .\PolicyDetail.csv | Add-ContentFilterPolicyDetail -ContentFilterPolicy "Bypass Spam Filtering for New York Partners"
 
 #>
     [CmdletBinding()]
@@ -141,16 +141,9 @@ function Add-ContentFilterPolicyDetail {
             $Params.Add("SetSCL", "-1")
         }
         if (!(Get-HostedContentFilterPolicy -Identity $ContentFilterPolicy -ErrorAction SilentlyContinue)) {
-            Try {
-                New-HostedContentFilterPolicy -Name $ContentFilterPolicy @Params -ErrorAction Stop
-                Write-Verbose "Content Filter Policy `"$ContentFilterPolicy`" has been created."
-                Write-Verbose "Parameters: `t $($Params.values | % { $_ -join " "})"
-            }
-            Catch {
-                $_
-                Write-Verbose "Unable to Create Content Filter Policy"
-                Throw
-            }
+            Write-Warning "Content Filter Policy `"$ContentFilterPolicy`" does not exist."
+            Write-Warning "First create Content Filter Policy in GUI: `"$ContentFilterPolicy`" and then rerun this function."
+            Throw
         }
         else { 
             Write-Verbose "Content Filter Policy `"$ContentFilterPolicy`" already exists."
