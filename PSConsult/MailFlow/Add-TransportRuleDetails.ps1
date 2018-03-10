@@ -184,20 +184,53 @@ function Add-TransportRuleDetails {
         }
     }
     end {
-        if ($Action01 -eq "DeleteMessage") {
-            $Params.Add("DeleteMessage", $true)
-        }
-        if ($Action01 -eq "BypassSpamFiltering") {
-            $Params.Add("SetSCL", "-1")
-        }
         if ($RecipientAddressContainsWords) {
+            if ((Get-TransportRule $TransportRule).RecipientAddressContainsWords) {
+                (Get-TransportRule $TransportRule).RecipientAddressContainsWords | ForEach-Object {$listAddressWords.Add($_)}
+            }
             $Params.Add("RecipientAddressContainsWords", $listAddressWords)
+        }
+        if ($ExceptIfRecipientAddressContainsWords) {
+            if ((Get-TransportRule $TransportRule).ExceptIfRecipientAddressContainsWords) {
+                (Get-TransportRule $TransportRule).ExceptIfRecipientAddressContainsWords | ForEach-Object {$listExceptAddressWords.Add($_)}
+            }
+            $Params.Add("ExceptIfRecipientAddressContainsWords", $listExceptAddressWords)
+        }
+        if ($SubjectOrBodyContainsWords) {
+            if ((Get-TransportRule $TransportRule).SubjectOrBodyContainsWords) {
+                (Get-TransportRule $TransportRule).SubjectOrBodyContainsWords | ForEach-Object {$listExceptAddressWords.Add($_)}
+            }
+            $Params.Add("SubjectOrBodyContainsWords", $listSBWords)
+        }
+        if ($ExceptIfSubjectOrBodyContainsWords) {
+            if ((Get-TransportRule $TransportRule).ExceptIfSubjectOrBodyContainsWords) {
+                (Get-TransportRule $TransportRule).ExceptIfSubjectOrBodyContainsWords | ForEach-Object {$ExceptIfSubjectOrBodyContainsWords.Add($_)}
+            }
+            $Params.Add("ExceptIfSubjectOrBodyContainsWords", $ExceptIfSubjectOrBodyContainsWords)
+        }
+        if ($AttachmentContainsWords) {
+            if ((Get-TransportRule $TransportRule).AttachmentContainsWords) {
+                (Get-TransportRule $TransportRule).AttachmentContainsWords | ForEach-Object {$listAttachmentWords.Add($_)}
+            }
+            $Params.Add("AttachmentContainsWords", $listAttachmentWords)
+        }
+        if ($AttachmentMatchesPatterns) {
+            if ((Get-TransportRule $TransportRule).AttachmentMatchesPatterns) {
+                (Get-TransportRule $TransportRule).AttachmentMatchesPatterns | ForEach-Object {$listAttachmentPattern.Add($_)}
+            }
+            $Params.Add("AttachmentMatchesPatterns", $listAttachmentPattern)
         }
         if ($listSenderIPRanges) {
             if ((Get-TransportRule $TransportRule).senderipranges) {
                 (Get-TransportRule $TransportRule).senderipranges | ForEach-Object {$listSenderIPRanges.Add($_)}
             }
             $Params.Add("SenderIPRanges", $listSenderIPRanges)
+        }
+        if ($Action01 -eq "DeleteMessage") {
+            $Params.Add("DeleteMessage", $true)
+        }
+        if ($Action01 -eq "BypassSpamFiltering") {
+            $Params.Add("SetSCL", "-1")
         }
         if (!(Get-TransportRule -Identity $TransportRule -ErrorAction SilentlyContinue)) {
             Try {
@@ -213,13 +246,13 @@ function Add-TransportRuleDetails {
         else { 
             Write-Verbose "Transport Rule `"$TransportRule`" already exists."
             try {
-                Set-TransportRule -Identity $TransportRule @Params
+                Set-TransportRule -Identity $TransportRule @Params -ErrorAction Stop
                 Write-Verbose "Parameters: `t $Params" 
-                $TransportRule + "," + $Params | Out-file $successPath -Encoding UTF8 -append
+                $TransportRule + "," + $($Params.values) | Out-file $successPath -Encoding UTF8 -append
             }
             catch {
                 Write-Warning $_
-                $TransportRule + "," + $Params + "," + $_ | Out-file $failedPath -Encoding UTF8 -append
+                $TransportRule + "," + $($Params.values) + "," + $_ | Out-file $failedPath -Encoding UTF8 -append
             }
         }
     }
