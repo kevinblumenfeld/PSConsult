@@ -72,11 +72,11 @@ function Add-TransportRuleDetails {
 
         You can specify multiple text patterns by using the following syntax: "<regular expression1>","<regular expression2>",....
 
-	.PARAMETER OutputPath
+    .PARAMETER OutputPath
         Where to write the report files to.
         By default it will write to the current path.
 
-	.EXAMPLE
+    .EXAMPLE
         Import-Csv .\RuleDetails.csv | Add-TransportRuleDetails -TransportRule "Block Macros Except when Certain Words are used" -Action01 DeleteMessage
 
         Example of RuleDetails.csv
