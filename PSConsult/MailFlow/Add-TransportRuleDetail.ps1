@@ -196,9 +196,9 @@ function Add-TransportRuleDetail {
             }
             $Params.Add("ExceptIfRecipientAddressContainsWords", $listExceptAddressWords)
         }
-        if ($listExceptAddressWords.count -gt "0") {
+        if ($listSBWords.count -gt "0") {
             if ((Get-TransportRule $TransportRule -ErrorAction SilentlyContinue).SubjectOrBodyContainsWords) {
-                (Get-TransportRule $TransportRule).SubjectOrBodyContainsWords | ForEach-Object {[void]$listExceptAddressWords.Add($_)}
+                (Get-TransportRule $TransportRule).SubjectOrBodyContainsWords | ForEach-Object {[void]$listSBWords.Add($_)}
             }
             $Params.Add("SubjectOrBodyContainsWords", $listSBWords)
         }

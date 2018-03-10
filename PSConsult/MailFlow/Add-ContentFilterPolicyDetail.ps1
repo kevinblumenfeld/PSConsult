@@ -1,10 +1,10 @@
 function Add-ContentFilterPolicyDetail {
     <#
     .SYNOPSIS
-        Adds details to Content Filter Policy.
+        Adds Detail to Content Filter Policy.
 
     .DESCRIPTION
-        Adds details to Content Filter Policy.
+        Adds Detail to Content Filter Policy.
 
     .PARAMETER ContentFilterPolicy
         Name of the Content Filter Policy to use.
@@ -38,7 +38,7 @@ function Add-ContentFilterPolicyDetail {
 
         Example of Policy Detail.csv
 
-        AddressWords, SubjectBodyWords, ExceptSubjectBodyWords, SenderIPs 
+        AllowedSenderDomains, SubjectBodyWords, ExceptSubjectBodyWords, SenderIPs 
         fred@contoso.com, moon, wind, 142.23.221.21
         jane@fabrikam.com, sun fire, rain, 142.23.220.1-142.23.220.254
         potato.com, ocean, snow, 72.14.52.0/24
@@ -81,16 +81,16 @@ function Add-ContentFilterPolicyDetail {
     )
     begin {
         $Params = @{}
-        $listAddressWords = New-Object System.Collections.Generic.HashSet[String]
-        $listExceptAddressWords = New-Object System.Collections.Generic.HashSet[String]
-        $listSBWords = New-Object System.Collections.Generic.HashSet[String]
+        $listAllowedSenderDomains = New-Object System.Collections.Generic.HashSet[String]
+        $listAllowedSenders = New-Object System.Collections.Generic.HashSet[String]
+        $BlockedSenderDomains = New-Object System.Collections.Generic.HashSet[String]
         $listExceptSBWords = New-Object System.Collections.Generic.HashSet[String]
         $listAttachmentWords = New-Object System.Collections.Generic.HashSet[String]
         $listAttachmentPattern = New-Object System.Collections.Generic.HashSet[String]
         $listSenderIPRanges = New-Object System.Collections.Generic.HashSet[String]
 
-        $headerstring = ("ContentFilterPolicy" + "," + "Details")
-        $errheaderstring = ("ContentFilterPolicy" + "," + "Details" + "," + "Error")
+        $headerstring = ("ContentFilterPolicy" + "," + "Detail")
+        $errheaderstring = ("ContentFilterPolicy" + "," + "Detail" + "," + "Error")
 		
         $successPath = Join-Path $OutputPath "Success.csv"
         $failedPath = Join-Path $OutputPath "Failed.csv"
@@ -100,13 +100,13 @@ function Add-ContentFilterPolicyDetail {
     }
     process {
         if ($RecipientAddressContainsWords) {
-            [void]$listAddressWords.add($RecipientAddressContainsWords)
+            [void]$listAllowedSenderDomains.add($RecipientAddressContainsWords)
         }
         if ($ExceptIfRecipientAddressContainsWords) {
-            [void]$listExceptAddressWords.add($ExceptIfRecipientAddressContainsWords)
+            [void]$listAllowedSenders.add($ExceptIfRecipientAddressContainsWords)
         }
         if ($SubjectOrBodyContainsWords) {
-            [void]$listSBWords.add($SubjectOrBodyContainsWords)
+            [void]$BlockedSenderDomains.add($SubjectOrBodyContainsWords)
         }
         if ($ExceptIfSubjectOrBodyContainsWords) {
             [void]$listExceptSBWords.add($ExceptIfSubjectOrBodyContainsWords)
@@ -122,23 +122,23 @@ function Add-ContentFilterPolicyDetail {
         }
     }
     end {
-        if ($listAddressWords.count -gt "0") {
+        if ($listAllowedSenderDomains.count -gt "0") {
             if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).RecipientAddressContainsWords) {
-                (Get-HostedContentFilterPolicy $ContentFilterPolicy).RecipientAddressContainsWords | ForEach-Object {[void]$listAddressWords.Add($_)}
+                (Get-HostedContentFilterPolicy $ContentFilterPolicy).RecipientAddressContainsWords | ForEach-Object {[void]$listAllowedSenderDomains.Add($_)}
             }
-            $Params.Add("RecipientAddressContainsWords", $listAddressWords)
+            $Params.Add("RecipientAddressContainsWords", $listAllowedSenderDomains)
         }
-        if ($listExceptAddressWords.count -gt "0") {
+        if ($listAllowedSenders.count -gt "0") {
             if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).ExceptIfRecipientAddressContainsWords) {
-                (Get-HostedContentFilterPolicy $ContentFilterPolicy).ExceptIfRecipientAddressContainsWords | ForEach-Object {[void]$listExceptAddressWords.Add($_)}
+                (Get-HostedContentFilterPolicy $ContentFilterPolicy).ExceptIfRecipientAddressContainsWords | ForEach-Object {[void]$listAllowedSenders.Add($_)}
             }
-            $Params.Add("ExceptIfRecipientAddressContainsWords", $listExceptAddressWords)
+            $Params.Add("ExceptIfRecipientAddressContainsWords", $listAllowedSenders)
         }
-        if ($listExceptAddressWords.count -gt "0") {
+        if ($listAllowedSenders.count -gt "0") {
             if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).SubjectOrBodyContainsWords) {
-                (Get-HostedContentFilterPolicy $ContentFilterPolicy).SubjectOrBodyContainsWords | ForEach-Object {[void]$listExceptAddressWords.Add($_)}
+                (Get-HostedContentFilterPolicy $ContentFilterPolicy).SubjectOrBodyContainsWords | ForEach-Object {[void]$listAllowedSenders.Add($_)}
             }
-            $Params.Add("SubjectOrBodyContainsWords", $listSBWords)
+            $Params.Add("SubjectOrBodyContainsWords", $BlockedSenderDomains)
         }
         if ($listExceptSBWords.count -gt "0") {
             if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).ExceptIfSubjectOrBodyContainsWords) {
