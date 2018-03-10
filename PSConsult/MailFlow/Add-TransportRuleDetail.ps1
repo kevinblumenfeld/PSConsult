@@ -1,4 +1,4 @@
-function Add-TransportRuleDetails {
+function Add-TransportRuleDetail {
     <#
     .SYNOPSIS
         Adds details to Transport Rule.  If the transport rule does not exist it creates it.
@@ -77,7 +77,7 @@ function Add-TransportRuleDetails {
         By default it will write to the current path.
 
     .EXAMPLE
-        Import-Csv .\RuleDetails.csv | Add-TransportRuleDetails -TransportRule "Block Macros Except when Certain Words are used" -Action01 DeleteMessage
+        Import-Csv .\RuleDetails.csv | Add-TransportRuleDetail -TransportRule "Block Macros Except when Certain Words are used" -Action01 DeleteMessage
 
         Example of RuleDetails.csv
 
@@ -86,7 +86,7 @@ function Add-TransportRuleDetails {
         jane@fabrikam.com, sun fire, rain, 142.23.220.1-142.23.220.254
         potato.com, ocean, snow, 72.14.52.0/24
     .EXAMPLE
-        Import-Csv .\RuleDetails.csv | Add-TransportRuleDetails -TransportRule "Bypass Spam Filtering for New York Partners" -Action01 BypassSpamFiltering
+        Import-Csv .\RuleDetails.csv | Add-TransportRuleDetail -TransportRule "Bypass Spam Filtering for New York Partners" -Action01 BypassSpamFiltering
 
 #>
     [CmdletBinding()]
@@ -258,4 +258,4 @@ function Add-TransportRuleDetails {
         }
     }
 }
-# Import-Csv c:\scripts\words.csv | Add-TransportRuleDetails -TransportRule "MultipleColumns10" -Action01 BypassSpamFiltering -Verbose
+# Import-Csv c:\scripts\words.csv | Add-TransportRuleDetail -TransportRule "MultipleColumns10" -Action01 BypassSpamFiltering -Verbose
