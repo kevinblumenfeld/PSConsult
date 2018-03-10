@@ -115,25 +115,25 @@ function Add-ContentFilterPolicyDetail {
     }
     end {
         if ($listAllowedSenderDomains.count -gt "0") {
-            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).AllowedSenderDomains) {
+            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).AllowedSenderDomains.Domain) {
                 (Get-HostedContentFilterPolicy $ContentFilterPolicy).AllowedSenderDomains | ForEach-Object {[void]$listAllowedSenderDomains.Add($_)}
             }
             $Params.Add("AllowedSenderDomains", $listAllowedSenderDomains)
         }
         if ($listAllowedSenders.count -gt "0") {
-            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).AllowedSenders) {
+            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).AllowedSenders.Sender.Address) {
                 (Get-HostedContentFilterPolicy $ContentFilterPolicy).AllowedSenders | ForEach-Object {[void]$listAllowedSenders.Add($_)}
             }
             $Params.Add("AllowedSenders", $listAllowedSenders)
         }
         if ($listBlockedSenderDomains.count -gt "0") {
-            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).BlockedSenderDomains) {
+            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).BlockedSenderDomains.Domain) {
                 (Get-HostedContentFilterPolicy $ContentFilterPolicy).BlockedSenderDomains | ForEach-Object {[void]$listBlockedSenderDomains.Add($_)}
             }
             $Params.Add("BlockedSenderDomains", $listBlockedSenderDomains)
         }
         if ($listBlockedSenders.count -gt "0") {
-            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).BlockedSenders) {
+            if ((Get-HostedContentFilterPolicy $ContentFilterPolicy -ErrorAction SilentlyContinue).BlockedSenders.Sender.Address) {
                 (Get-HostedContentFilterPolicy $ContentFilterPolicy).BlockedSenders | ForEach-Object {[void]$listBlockedSenders.Add($_)}
             }
             $Params.Add("BlockedSenders", $listBlockedSenders)
