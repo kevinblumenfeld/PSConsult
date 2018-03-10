@@ -1,10 +1,10 @@
 function Add-ContentFilterPolicyDetail {
     <#
     .SYNOPSIS
-        Adds Detail to Content Filter Policy.
+        Adds Detail to Content Filter Policy. Specifically, Allowed/Blocked Senders and Domains
 
     .DESCRIPTION
-        Adds Detail to Content Filter Policy.
+        Adds Detail to Content Filter Policy. Specifically, Allowed/Blocked Senders and Domains
 
     .PARAMETER ContentFilterPolicy
         Name of the Content Filter Policy to use.
@@ -137,12 +137,6 @@ function Add-ContentFilterPolicyDetail {
                 (Get-HostedContentFilterPolicy $ContentFilterPolicy).BlockedSenders.Sender.Address | ForEach-Object {[void]$listBlockedSenders.Add($_)}
             }
             $Params.Add("BlockedSenders", $listBlockedSenders)
-        }
-        if ($Action01 -eq "DeleteMessage") {
-            $Params.Add("DeleteMessage", $true)
-        }
-        if ($Action01 -eq "BypassSpamFiltering") {
-            $Params.Add("SetSCL", "-1")
         }
         if (!(Get-HostedContentFilterPolicy -Identity $ContentFilterPolicy -ErrorAction SilentlyContinue)) {
             Write-Warning "Content Filter Policy `"$ContentFilterPolicy`" does not exist."
