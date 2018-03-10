@@ -98,7 +98,7 @@ function Add-TransportRuleDetails {
 
         [Parameter(ValueFromPipelineByPropertyName = $true)]
         [Alias('AddressWords')]
-        [string[]]
+        [string]
         $RecipientAddressContainsWords,
         
         [Parameter(ValueFromPipelineByPropertyName = $true)]
@@ -184,44 +184,44 @@ function Add-TransportRuleDetails {
         }
     }
     end {
-        if ($RecipientAddressContainsWords) {
-            if ((Get-TransportRule $TransportRule).RecipientAddressContainsWords) {
+        if ($listAddressWords.count -gt "0") {
+            if ((Get-TransportRule $TransportRule -ErrorAction SilentlyContinue).RecipientAddressContainsWords) {
                 (Get-TransportRule $TransportRule).RecipientAddressContainsWords | ForEach-Object {[void]$listAddressWords.Add($_)}
             }
             $Params.Add("RecipientAddressContainsWords", $listAddressWords)
         }
-        if ($ExceptIfRecipientAddressContainsWords) {
-            if ((Get-TransportRule $TransportRule).ExceptIfRecipientAddressContainsWords) {
+        if ($listExceptAddressWords.count -gt "0") {
+            if ((Get-TransportRule $TransportRule -ErrorAction SilentlyContinue).ExceptIfRecipientAddressContainsWords) {
                 (Get-TransportRule $TransportRule).ExceptIfRecipientAddressContainsWords | ForEach-Object {[void]$listExceptAddressWords.Add($_)}
             }
             $Params.Add("ExceptIfRecipientAddressContainsWords", $listExceptAddressWords)
         }
-        if ($SubjectOrBodyContainsWords) {
-            if ((Get-TransportRule $TransportRule).SubjectOrBodyContainsWords) {
+        if ($listExceptAddressWords.count -gt "0") {
+            if ((Get-TransportRule $TransportRule -ErrorAction SilentlyContinue).SubjectOrBodyContainsWords) {
                 (Get-TransportRule $TransportRule).SubjectOrBodyContainsWords | ForEach-Object {[void]$listExceptAddressWords.Add($_)}
             }
             $Params.Add("SubjectOrBodyContainsWords", $listSBWords)
         }
-        if ($ExceptIfSubjectOrBodyContainsWords) {
-            if ((Get-TransportRule $TransportRule).ExceptIfSubjectOrBodyContainsWords) {
-                (Get-TransportRule $TransportRule).ExceptIfSubjectOrBodyContainsWords | ForEach-Object {[void]$ExceptIfSubjectOrBodyContainsWords.Add($_)}
+        if ($listExceptSBWords.count -gt "0") {
+            if ((Get-TransportRule $TransportRule -ErrorAction SilentlyContinue).ExceptIfSubjectOrBodyContainsWords) {
+                (Get-TransportRule $TransportRule).ExceptIfSubjectOrBodyContainsWords | ForEach-Object {[void]$listExceptSBWords.Add($_)}
             }
-            $Params.Add("ExceptIfSubjectOrBodyContainsWords", $ExceptIfSubjectOrBodyContainsWords)
+            $Params.Add("ExceptIfSubjectOrBodyContainsWords", $listExceptSBWords)
         }
-        if ($AttachmentContainsWords) {
-            if ((Get-TransportRule $TransportRule).AttachmentContainsWords) {
+        if ($listAttachmentWords.count -gt "0") {
+            if ((Get-TransportRule $TransportRule -ErrorAction SilentlyContinue).AttachmentContainsWords) {
                 (Get-TransportRule $TransportRule).AttachmentContainsWords | ForEach-Object {[void]$listAttachmentWords.Add($_)}
             }
             $Params.Add("AttachmentContainsWords", $listAttachmentWords)
         }
-        if ($AttachmentMatchesPatterns) {
-            if ((Get-TransportRule $TransportRule).AttachmentMatchesPatterns) {
+        if ($listAttachmentPattern.count -gt "0") {
+            if ((Get-TransportRule $TransportRule -ErrorAction SilentlyContinue).AttachmentMatchesPatterns) {
                 (Get-TransportRule $TransportRule).AttachmentMatchesPatterns | ForEach-Object {[void]$listAttachmentPattern.Add($_)}
             }
             $Params.Add("AttachmentMatchesPatterns", $listAttachmentPattern)
         }
-        if ($listSenderIPRanges) {
-            if ((Get-TransportRule $TransportRule).senderipranges) {
+        if ($listSenderIPRanges.count -gt "0") {
+            if ((Get-TransportRule $TransportRule -ErrorAction SilentlyContinue).senderipranges) {
                 (Get-TransportRule $TransportRule).senderipranges | ForEach-Object {[void]$listSenderIPRanges.Add($_)}
             }
             $Params.Add("SenderIPRanges", $listSenderIPRanges)
@@ -257,4 +257,4 @@ function Add-TransportRuleDetails {
         }
     }
 }
-Import-Csv c:\scripts\words.csv | Add-TransportRuleDetails -TransportRule "MultipleColumns3" -Action01 BypassSpamFiltering -Verbose
+# Import-Csv c:\scripts\words.csv | Add-TransportRuleDetails -TransportRule "MultipleColumns10" -Action01 BypassSpamFiltering -Verbose
