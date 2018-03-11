@@ -14,7 +14,7 @@ function Add-Task {
         Either Domain\User or ComputerName\User
 
     .PARAMETER Disabled
-        If used, Task will be created as "Disabled"
+        If used, Task will be created as "Disabled".  Otherwise Task will be Enabled by default
 
     .PARAMETER RepeatInMinutes
         How frequently the task should repeat
