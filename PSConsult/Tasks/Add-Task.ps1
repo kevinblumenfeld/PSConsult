@@ -1,37 +1,36 @@
 function Add-Task {
     <#
-	.SYNOPSIS
+    .SYNOPSIS
         Create Scheduled Tasks
 
     .DESCRIPTION
         Create Scheduled Tasks
 
-	.PARAMETER TaskName
+    .PARAMETER TaskName
         Name of the Scheduled Task to create
 
-	.PARAMETER User
+    .PARAMETER User
         User name would under which the Scheduled Task will run
         Either Domain\User or ComputerName\User
 
     .PARAMETER Disabled
         If used, Task will be created as "Disabled"
-        
-	.PARAMETER RepeatInMinutes
+
+    .PARAMETER RepeatInMinutes
         How frequently the task should repeat
 
     .PARAMETER RepetitionDuration
         Repetition Duration is by default, "Indefinitely".
         Only use this parameter to set the duration to something other than "Indefinitely"
-        
-	.PARAMETER Executable
+
+    .PARAMETER Executable
         Which executable this Scheduled Task will execute
 
-	.PARAMETER Argument
+    .PARAMETER Argument
         The arguments to pass to the executable
-    
+
     .EXAMPLE
         Add-Task -TaskName "Audit Log Collection" -User "W10O16-4\audit" -RepeatInMinutes 30 -Executable "PowerShell.exe" -Argument '-ExecutionPolicy RemoteSigned -Command "Get-AuditLog -Tenant LAPCM -Path C:\scripts\ -FileName 365Log -TimeFrameInMinutes 800"'
-
 #>
     [CmdletBinding()]
     Param
