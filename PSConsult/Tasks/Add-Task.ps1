@@ -75,7 +75,8 @@ function Add-Task {
     }
 
     if ($RepetitionDuration) {
-        $TriggerSplat.Add("RepetitionDuration", $RepetitionDuration)
+        $RepDuration = (New-TimeSpan -Minutes $RepetitionDuration)
+        $TriggerSplat.Add("RepetitionDuration", $RepDuration)
     }
 
     $SettingsSplat = @{
