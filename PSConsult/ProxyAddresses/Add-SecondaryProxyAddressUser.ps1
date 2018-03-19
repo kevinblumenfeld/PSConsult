@@ -28,7 +28,14 @@ function Add-SecondaryProxyAddressUser {
         $Path
     )
     Begin {
-        Import-Module ActiveDirectory -ErrorAction SilentlyContinue
+        Try {
+            import-module activedirectory -ErrorAction Stop
+        }
+        Catch {
+            Write-Host "This module depends on the ActiveDirectory module."
+            Write-Host "Please download and install from https://www.microsoft.com/en-us/download/details.aspx?id=45520"
+            throw
+        }
     }
     Process {
         $Proxies = $null
