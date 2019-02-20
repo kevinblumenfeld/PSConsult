@@ -1,9 +1,32 @@
+
+
+# Assign user to Management Role of "Address Lists" - Restart PowerShell after this command
+New-ManagementRoleAssignment –Name:'AssignAdminToAddressList' –Role:'Address Lists' –User:'admin@contoso.onmicrosoft.com'
+
+# Create New Global Address List (GAL)
+New-GlobalAddressList -Name 'Contoso GAL' -RecipientFilter '((RecipientType -eq "UserMailbox") -and (CustomAttribute15 -eq "Tenured"))'
+
+# Create Address List (AL)
+New-AddressList -Name 'Contoso AL' -ConditionalStateOrProvince 'Washington' -IncludedRecipients 'MailboxUsers'
+
+# Create Address List with all Conference Room List (RL)
+New-AddressList -Name 'Contoso RL' -RecipientFilter 'RecipientDisplayType -eq "ConferenceRoomMailbox"'
+
+# Create Offline Address Book (OAB)
+New-OfflineAddressBook -Name 'Contoso OAB' -AddressLists 'Contoso GAL', 'Contoso AL', 'Contoso RL'
+
+# Create Address Book Policy (ABP)
+New-AddressBookPolicy -Name 'Contoso ABP' -AddressLists 'Contoso AL' -RoomList 'Contoso RL' -OfflineAddressBook 'Contoso OAB' -GlobalAddressList 'Contoso GAL'
+
+
+
+
 # Accounting Address Lists, GAL, OAB and Address Book Policy
 
 New-AddressList -Name "Accounting-GROUPS" -RecipientFilter {(((RecipientType -eq 'MailUniversalDistributionGroup') -or (RecipientType -eq 'DynamicDistributionGroup')) -and (CustomAttribute2 -eq 'Accounting'))}
 
 New-GlobalAddressList -name "Accounting-GAL" -RecipientFilter {((Alias -ne $null) -and ((ObjectClass -eq 'user') -or
-            (ObjectClass -eq 'contact')) -or (((RecipientType -eq 'MailUniversalDistributionGroup') -or 
+            (ObjectClass -eq 'contact')) -or (((RecipientType -eq 'MailUniversalDistributionGroup') -or
                 (RecipientType -eq 'DynamicDistributionGroup')) -and (CustomAttribute2 -eq 'Accounting')))}
 
 New-OfflineAddressBook -name "Accounting-OAB" -AddressLists "Accounting-GAL"
@@ -18,7 +41,7 @@ New-AddressBookPolicy -name "Accounting-ABP" -AddressLists "\All Users", "\All C
 New-AddressList -Name "CORP-GROUPS" -RecipientFilter {(((RecipientType -eq 'MailUniversalDistributionGroup') -or (RecipientType -eq 'DynamicDistributionGroup')) -and (CustomAttribute1 -eq 'CORP'))}
 
 New-GlobalAddressList -name "CORP-GAL" -RecipientFilter {((Alias -ne $null) -and ((ObjectClass -eq 'user') -or
-            (ObjectClass -eq 'contact')) -or (((RecipientType -eq 'MailUniversalDistributionGroup') -or 
+            (ObjectClass -eq 'contact')) -or (((RecipientType -eq 'MailUniversalDistributionGroup') -or
                 (RecipientType -eq 'DynamicDistributionGroup')) -and (CustomAttribute1 -eq 'CORP')))}
 
 New-OfflineAddressBook -name "CORP-OAB" -AddressLists "CORP-GAL"
@@ -92,9 +115,9 @@ Write-Host "Tickling Complete"
 ################
 
 New-AddressList -Name GroupAddressList -RecipientFilter {
-    ((RecipientType -eq 'UserMailbox') -and 
-        ((StateOrProvince -eq 'GA') -or (StateOrProvince -eq 'Georgia'))) -and 
-    (((RecipientType -eq 'MailUniversalDistributionGroup') -or (RecipientType -eq 'MailUniversalSecurityGroup')) -and 
+    ((RecipientType -eq 'UserMailbox') -and
+        ((StateOrProvince -eq 'GA') -or (StateOrProvince -eq 'Georgia'))) -and
+    (((RecipientType -eq 'MailUniversalDistributionGroup') -or (RecipientType -eq 'MailUniversalSecurityGroup')) -and
         ((CustomAttribute1 -eq 'TEST') -or (CustomAttribute1 -eq 'TEST1')))}
 
 
@@ -116,9 +139,9 @@ New-AddressList -Name "Kevin3Contacts" -RecipientFilter {(RecipientType -eq 'Mai
 New-AddressList -Name "Kevin3Mailboxes" -RecipientFilter {(RecipientType -eq 'UserMailbox') -and (StateOrProvince -eq 'GA')}
 New-AddressList -Name "Kevin3Groups" -RecipientFilter {(RecipientType -eq 'MailUniversalDistributionGroup') -and (CustomAttribute1 -eq 'TEST')}
 New-AddressList -Name "Kevin3Resources" -RecipientFilter {(RecipientTypeDetails -eq 'RoomMailbox')}
-    
 
-New-GlobalAddressList -name Kevin3GAL -RecipientFilter {(RecipientType -eq 'MailContact') -or 
+
+New-GlobalAddressList -name Kevin3GAL -RecipientFilter {(RecipientType -eq 'MailContact') -or
     ((RecipientType -eq 'UserMailbox') -and (StateOrProvince -eq 'GA')) -or
     ((RecipientType -eq 'MailUniversalDistributionGroup') -and (CustomAttribute1 -eq 'TEST')) -or
     (RecipientTypeDetails -eq 'RoomMailbox')}

@@ -129,7 +129,7 @@ function Copy-ToServer {
         Write-Host
         Write-Host "Working on $($TargetServerName) and receive connector $($ConnectorName)"
 
-        # clear permission groups for Exchange Server 2013 (thanks to Jeffery Land, https://jefferyland.wordpress.com)
+        # clear permission groups
         $tempPermissionGroups = @($sourceRC.PermissionGroups) -split ', ' | Select-String -Pattern 'Custom' -NotMatch
         $temp = ("$($tempPermissionGroups)").Replace(' ', ', ').Replace(' ','')
 

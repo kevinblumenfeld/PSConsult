@@ -11,10 +11,13 @@
     Param 
     (
         [parameter(ValueFromPipelineByPropertyName = $true)]
+        [Alias("Object")]
         $Mailbox,
         [parameter(ValueFromPipelineByPropertyName = $true)]
+        [Alias("ObjectPrimarySMTP")]
         $UPN,
         [parameter(ValueFromPipelineByPropertyName = $true)]
+        [Alias("GrantedPrimarySMTP")]
         $GrantedUPN,
         [parameter(ValueFromPipelineByPropertyName = $true)]
         $Permission
@@ -30,7 +33,7 @@
         $global:ErrorActionPreference = 'stop'
         if ($Permission -eq "SendAs") {
             Try {
-                $gms = Add-RecipientPermission $UPN -AccessRights SendAs -Trustee $GrantedUPN
+                $gms = Add-RecipientPermission $UPN -AccessRights SendAs -Trustee $GrantedUPN -Confirm:$false
                 $UPN + "," + $GrantedUPN | Out-file ./SuccessToSetSendAs.csv -Encoding UTF8 -append
             }
             Catch {

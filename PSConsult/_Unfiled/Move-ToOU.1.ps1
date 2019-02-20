@@ -13,7 +13,7 @@
     (
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true)]
-        $Users
+        $users
     )
     Begin {
         $Target = "OU=ADOnly,OU=Users,OU=SJ,DC=contoso,DC=com"
@@ -21,7 +21,8 @@
     }
     Process {
         Foreach ($user in $users) {
-            Get-ADUser -Identity $user | Move-ADObject -TargetPath $Target -Server $DC
+            # Get-ADUser -Identity $user | Move-ADObject -TargetPath $Target -Server $DC
+            Get-ADUser -Filter { displayName -eq $user } | Move-ADObject -TargetPath $Target -Server $DC
         }
     }
 

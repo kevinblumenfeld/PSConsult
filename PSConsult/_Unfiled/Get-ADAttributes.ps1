@@ -5,4 +5,4 @@ foreach ($object in $objects) {
         $null = $properties.Add($property.Name)
     }
 }
-$objects | Select-Object ([String[]]$properties)
+$objects | Select-Object ([String[]]$properties) | GM

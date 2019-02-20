@@ -1,11 +1,11 @@
-﻿function Grant-FullAccess {
+﻿function Grant-SendOnBehalf {
     [CmdletBinding()]
     <#
     .SYNOPSIS
-    Add full access to mailboxes when you using the UPN for -Identity
+    Add SendOnBehalf to mailboxes when you using the UPN for -Identity
 
     .EXAMPLE
-    Import-Csv .\AllPermissions.csv | Grant-FullAccess
+    Import-Csv .\AllPermissions.csv | Grant-SendOnBehalf
 
     #>
     Param 
@@ -25,20 +25,20 @@
     Begin {
         $headerstring = ("UPN" + "," + "GrantedUPN")
         $errheaderstring = ("UPN" + "," + "GrantedUPN" + "," + "Error")
-        Out-File -FilePath ./SuccessToSetFullAccess.csv -InputObject $headerstring -Encoding UTF8 -append
-        Out-File -FilePath ./FailedToSetFullAccess.csv -InputObject $errheaderstring -Encoding UTF8 -append
+        Out-File -FilePath ./SuccessToSetSendOnBehalf.csv -InputObject $headerstring -Encoding UTF8 -append
+        Out-File -FilePath ./FailedToSetSendOnBehalf.csv -InputObject $errheaderstring -Encoding UTF8 -append
     } 
     Process {
         $saved = $global:ErrorActionPreference
         $global:ErrorActionPreference = 'stop'
-        if ($Permission -eq "FullAccess") {
+        if ($Permission -eq "SendOnBehalf") {
             Try {
-                $gms = Add-MailboxPermission -Identity $UPN -User $GrantedUPN -AccessRights FullAccess -InheritanceType All -AutoMapping:$false
-                $UPN + "," + $GrantedUPN | Out-file ./SuccessToSetFullAccess.csv -Encoding UTF8 -append
+                $gms = Set-Mailbox $UPN -GrantSendOnBehalfTo $GrantedUPN -Confirm:$false
+                $UPN + "," + $GrantedUPN | Out-file ./SuccessToSetSendOnBehalf.csv -Encoding UTF8 -append
             }
             Catch {
                 Write-Warning $_
-                $UPN + "," + $GrantedUPN + "," + $_ | Out-file ./FailedToSetFullAccess.csv -Encoding UTF8 -append
+                $UPN + "," + $GrantedUPN + "," + $_ | Out-file ./FailedToSetSendOnBehalf.csv -Encoding UTF8 -append
             }
             Finally {
                 $global:ErrorActionPreference = $saved
